@@ -25,9 +25,9 @@ namespace Entities.Models
         public DateTime Updated { get; set; }
         public bool IsActive { get; set; }
 
-        /*
+        
         public virtual ICollection<UserBusiness> UsersBusiness { get; set; }
-        public virtual ICollection<UserClient> UsersClients { get; set; }
-        */
+        public virtual ICollection<UserClient> UsersClient { get; set; }
+        
     }
 }

@@ -18,5 +18,7 @@ namespace Entities.Models
 
         public virtual UserBusiness UserBusiness { get; set; }
 
+        public ICollection<Sale> Sale { get; set; }
+
     }
 }

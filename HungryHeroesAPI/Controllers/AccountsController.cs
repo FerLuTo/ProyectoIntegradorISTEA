@@ -7,7 +7,6 @@ using Entities.ViewModels.Response;
 using Microsoft.AspNetCore.Mvc;
 
 
-
 namespace HungryHeroesAPI.Controllers
 {
     [Route("[controller]")]
@@ -75,7 +74,7 @@ namespace HungryHeroesAPI.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [Authorize(Role.Admin)]
-        [HttpGet("{int}")]
+        [HttpGet("{id:int}")]
         public ActionResult<AccountResponse> GetById(int id)
         {
             var account = _accountService.GetById(id);
@@ -113,7 +112,7 @@ namespace HungryHeroesAPI.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [Authorize(Role.Admin)]
-        [HttpDelete("{int}")]
+        [HttpDelete("{id:int}")]
         public IActionResult Delete(int id)
         {
             

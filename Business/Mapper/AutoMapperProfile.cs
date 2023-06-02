@@ -22,8 +22,7 @@ namespace Business.Mapper
 
             CreateMap<RegisterRequest, Account>();
 
-            CreateMap<Account, UserBusinessRequest>()
-                .ForMember(x => x.AccountId, map => map.MapFrom(src => src.Id));
+            CreateMap<Account, UserBusinessRequest>();
 
             #endregion
 
@@ -31,10 +30,6 @@ namespace Business.Mapper
             CreateMap<UserBusiness, UserBusinessResponse>();
 
             CreateMap<UserBusinessRequest, UserBusiness>();
-
-            #endregion
-
-            #region UserClient
 
             #endregion
 
@@ -53,8 +48,9 @@ namespace Business.Mapper
             #endregion
 
             #region SaleDetail
-            #endregion
+            CreateMap<SaleDetail, SaleDetailResponse>();
 
+            #endregion
         }
 
     }

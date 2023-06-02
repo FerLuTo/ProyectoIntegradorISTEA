@@ -3,7 +3,6 @@ using Common.Attributes;
 using Entities.Enum;
 using Entities.ViewModels.Request;
 using Entities.ViewModels.Response;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HungryHeroesAPI.Controllers
@@ -20,14 +19,14 @@ namespace HungryHeroesAPI.Controllers
         }
 
         [Authorize(Role.Business)]
-        [AllowAnonymous]
+       // [AllowAnonymous]
         [HttpPost]
         public async Task<UserBusinessResponse> Create(UserBusinessRequest model)
             => await _businessService.Create(model);
 
         [Authorize(Role.Business)]
-        [AllowAnonymous]
-        [HttpPut("{id}")]
+       // [AllowAnonymous]
+        [HttpPut("{id:int}")]
         public async Task<UserBusinessResponse> Edit(int id, UserBusinessRequest model)
             => await _businessService.Edit(id, model);
 

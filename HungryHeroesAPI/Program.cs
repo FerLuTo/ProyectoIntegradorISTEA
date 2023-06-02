@@ -1,4 +1,3 @@
-using System;
 using System.Text.Json.Serialization;
 using AccessData;
 using Business.Interfaces;
@@ -40,7 +39,6 @@ var builder = WebApplication.CreateBuilder(args);
     services.AddScoped<IProductService, ProductService>();
     services.AddScoped<ISaleService, SaleService>();
     services.AddScoped<ISaleDetailService, SaleDetailService>();
-    services.AddScoped<IUserClientService, UserClientService>();
 
 
 }

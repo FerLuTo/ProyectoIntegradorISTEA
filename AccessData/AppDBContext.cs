@@ -1,10 +1,5 @@
 ﻿using Entities.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AccessData
 {
@@ -13,6 +8,7 @@ namespace AccessData
         public AppDBContext(DbContextOptions<AppDBContext> options) : base(options) { }
         public DbSet<Account> Accounts { get; set; }
         public DbSet<UserBusiness> UserBusinesses { get; set; }
+        public DbSet<UserClient> UserClients { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Sale> Sales { get; set; }
         public DbSet<SaleDetail> SaleDetails { get; set; }
@@ -57,17 +53,54 @@ namespace AccessData
                 entity.Property(e => e.Updated)
                    .HasColumnType("datetime2");
 
-                entity.Property(e => e.IsActive)
-                   .HasColumnName("IsActive");
+            });
 
+            modelBuilder.Entity<UserBusiness>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.FantasyName)
+                      .HasColumnType("varchar")
+                      .HasMaxLength(100);
+
+                entity.Property(e => e.BusinessName)
+                      .HasColumnType("varchar")
+                      .HasMaxLength(100);
+
+                entity.Property(e => e.Slogan)
+                    .HasColumnType("varchar")
+                    .HasMaxLength(200);
+
+                entity.Property(e => e. Description)
+                    .HasColumnType("varchar")
+                    .HasMaxLength(200);
+
+                entity.Property(e => e.Address)
+                    .HasColumnType("varchar")
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Location)
+                    .HasColumnType("varchar")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Alias)
+                    .HasColumnType("varchar")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Web)
+                    .HasColumnType("varchar")
+                    .HasMaxLength(100);
+
+                entity.HasOne(e => e.Account)
+                      .WithMany(e => e.UsersBusiness)
+                      .HasForeignKey(e => e.AccountId);
             });
 
             modelBuilder.Entity<UserClient>(entity =>
             {
                 entity.HasKey(x => x.Id);
-                entity.HasKey(e => e.Id);
                 entity.HasOne(e => e.Account)
-                      .WithMany(e => e.UsersClients)
+                      .WithMany(e => e.UsersClient)
                       .HasForeignKey(e => e.AccountId);
             });
 
@@ -93,10 +126,37 @@ namespace AccessData
             modelBuilder.Entity<Sale>(entity =>
             {
                 entity.HasKey(x => x.Id);
-                entity.HasOne(e => e.UserClient)
-                    .WithMany(e => e.Sales)
-                    .HasForeignKey(e => e.UserClientId);
+
+                entity.Property(x => x.DateSale)
+                      .HasColumnType("datetime2");
+
+                entity.Property(e => e.Code);
+
+                entity.Property(e => e.Total)
+                      .HasColumnType("decimal");
+
+                entity.HasOne(e => e.Product)
+                    .WithMany(e => e.Sale)
+                    .HasForeignKey(e => e.ProductId);
             });
+
+            modelBuilder.Entity<SaleDetail>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+
+                entity.Property(x => x.BoxName)
+                      .HasColumnType("varchar")
+                      .HasMaxLength(100);
+
+                entity.Property(e => e.FantasyName)
+                      .HasColumnType("varchar")
+                      .HasMaxLength(100);
+
+                entity.HasOne(e => e.Sale)
+                    .WithMany(e => e.SaleDetails)
+                    .HasForeignKey(e => e.SaleId);
+            });
+
         }
 
     

@@ -3,7 +3,6 @@ using Common.Attributes;
 using Entities.Enum;
 using Entities.ViewModels.Request;
 using Entities.ViewModels.Response;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HungryHeroesAPI.Controllers
@@ -33,7 +32,7 @@ namespace HungryHeroesAPI.Controllers
 
         
         [AllowAnonymous]
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public ProductResponse GetProduct(int id)
             => _productService.GetProduct(id);
 
@@ -45,13 +44,13 @@ namespace HungryHeroesAPI.Controllers
 
         [Authorize(Role.Business)]
         //[AllowAnonymous]
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<ProductResponse> Edit(int id, ProductRequest model)
          => await _productService.Edit(id, model);
 
         [Authorize(Role.Business)]
         //[AllowAnonymous]
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public IActionResult Delete(int id)
         {
             _productService.Delete(id);
