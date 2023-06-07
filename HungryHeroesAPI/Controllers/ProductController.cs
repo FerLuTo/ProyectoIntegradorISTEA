@@ -19,12 +19,13 @@ namespace HungryHeroesAPI.Controllers
             _productService = productService;
         }
 
+        [Authorize(Role.Admin)]
         [AllowAnonymous]
         [HttpGet("All")]
         public IEnumerable<ProductResponse> GetProducts()
             => _productService.GetProducts();
 
-        [Authorize(Role.Admin)]
+        [Authorize(Role.Client)]
         //[AllowAnonymous]
         [HttpGet("AllByBusiness/{idUserBusiness}")]
         public IEnumerable<ProductResponse> GetProductsByUserBusiness(int idUserBusiness)

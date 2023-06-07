@@ -10,10 +10,12 @@ namespace Entities.Models
     {
         public int Id { get; set; }
         public int SaleId { get; set; }
+        public int ProductId { get; set; }
         public string BoxName { get; set; } = string.Empty;
         public string FantasyName { get; set; } = string.Empty;
         public int Quantity { get; set; }
-        public int Total { get; set; }
+        public decimal Price { get; set; }
+        public decimal Total { get; set; }
         public bool Delivered { get; set; }
 
         public virtual Sale? Sale { get; set; }

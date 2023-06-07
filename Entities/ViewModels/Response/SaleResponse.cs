@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Entities.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,5 +14,7 @@ namespace Entities.ViewModels.Response
         public string Code { get; set; }
         public int Quantity { get; set; }
         public decimal Total { get; set; }
+
+        public ICollection<SaleDetailResponse>? SaleDetails { get; set; }
     }
 }

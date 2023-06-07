@@ -86,7 +86,7 @@ namespace HungryHeroesAPI.Controllers
         /// </summary>
         /// <returns></returns>
         [Authorize(Role.Admin)]
-        [HttpGet]
+        [HttpGet("All")]
         public ActionResult<IEnumerable<AccountResponse>> GetAll()
         {
             var accounts = _accountService.GetAll();
@@ -99,7 +99,7 @@ namespace HungryHeroesAPI.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [Authorize(Role.Admin)]
-        [HttpPost]
+        [HttpPost("Create-Admin")]
         public ActionResult<AccountResponse> Create(CreateRequest model)
         {
             var account = _accountService.Create(model);

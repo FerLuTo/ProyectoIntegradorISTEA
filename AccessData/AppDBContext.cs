@@ -35,7 +35,7 @@ namespace AccessData
                      .HasMaxLength(200);
 
                 entity.Property(e => e.VerifiedAt)
-                    .HasColumnType("datetime");
+                    .HasColumnType("datetime2");
 
                 entity.Property(e => e.ResetToken)
                      .HasColumnType("varchar")
@@ -117,9 +117,8 @@ namespace AccessData
                     .HasColumnType("varchar")
                     .HasMaxLength(100);
 
-                entity.HasOne(e => e.UserBusiness)
-                    .WithMany(e => e.Products)
-                    .HasForeignKey(e => e.UserBusinessId);
+                entity.Property(e => e.Price)
+                      .HasColumnType("decimal(10,2)");
 
             });
 
@@ -128,16 +127,18 @@ namespace AccessData
                 entity.HasKey(x => x.Id);
 
                 entity.Property(x => x.DateSale)
-                      .HasColumnType("datetime2");
+                      .HasColumnType("datetime2")
+                      .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.Code);
+                entity.Property(e => e.Code)
+                      .HasColumnType("varchar");
 
                 entity.Property(e => e.Total)
-                      .HasColumnType("decimal");
+                      .HasColumnType("decimal(10,2)");
 
-                entity.HasOne(e => e.Product)
-                    .WithMany(e => e.Sale)
-                    .HasForeignKey(e => e.ProductId);
+                entity.HasOne(e => e.UserClient)
+                    .WithMany(e => e.Sales)
+                    .HasForeignKey(e => e.UserClientId);
             });
 
             modelBuilder.Entity<SaleDetail>(entity =>
@@ -152,9 +153,16 @@ namespace AccessData
                       .HasColumnType("varchar")
                       .HasMaxLength(100);
 
+                entity.Property(e => e.Price)
+                      .HasColumnType("decimal(10,2)");
+
+                entity.Property(e => e.Total)
+                      .HasColumnType("decimal(10,2)");
+
                 entity.HasOne(e => e.Sale)
                     .WithMany(e => e.SaleDetails)
                     .HasForeignKey(e => e.SaleId);
+
             });
 
         }

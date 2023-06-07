@@ -5,10 +5,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AccessData.Migrations
 {
-    /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -21,7 +19,7 @@ namespace AccessData.Migrations
                     PasswordHash = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
                     Role = table.Column<int>(type: "int", nullable: false),
                     VerificationToken = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false),
-                    VerifiedAt = table.Column<DateTime>(type: "datetime", nullable: true),
+                    VerifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ResetToken = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false),
                     ResetTokenExpires = table.Column<DateTime>(type: "datetime2", nullable: true),
                     PasswordReset = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -93,7 +91,7 @@ namespace AccessData.Migrations
                     Name = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
                     Stock = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     UserBusinessId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -114,20 +112,21 @@ namespace AccessData.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DateSale = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserClientId = table.Column<int>(type: "int", nullable: false),
+                    DateSale = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())"),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    Total = table.Column<decimal>(type: "decimal(18,0)", nullable: false),
-                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Total = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    Code = table.Column<string>(type: "varchar", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    ProductId = table.Column<int>(type: "int", nullable: false)
+                    ProductId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Sales", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Sales_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
+                        name: "FK_Sales_UserClients_UserClientId",
+                        column: x => x.UserClientId,
+                        principalTable: "UserClients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -139,10 +138,12 @@ namespace AccessData.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SaleId = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
                     BoxName = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
                     FantasyName = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    Total = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    Total = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     Delivered = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -167,9 +168,9 @@ namespace AccessData.Migrations
                 column: "SaleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Sales_ProductId",
+                name: "IX_Sales_UserClientId",
                 table: "Sales",
-                column: "ProductId");
+                column: "UserClientId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserBusinesses_AccountId",
@@ -182,7 +183,6 @@ namespace AccessData.Migrations
                 column: "AccountId");
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

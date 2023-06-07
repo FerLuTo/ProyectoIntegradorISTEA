@@ -16,7 +16,8 @@ namespace Business.Services
         private readonly IMapper _mapper;
 
         public async Task<SaleResponse> Create(SaleRequest model)
-        {/*
+        {
+
             _ = await _context.UserBusinesses.FindAsync(model.UserClientId) ?? throw new NotFoundException("User Client not found");
 
             var sale = _mapper.Map<Sale>(model);
@@ -24,32 +25,7 @@ namespace Business.Services
             await _context.SaveChangesAsync();
 
             return _mapper.Map<SaleResponse>(sale);
-            */
 
-            if (_context.Sales is null)
-            {
-                throw new BadRequestException("Cannot enter new sale");
-            }
-
-            Product newProd = _context.Products.Find(model.ProductId);
-            Sale newSale = new Sale();
-            newSale.DateSale = DateTime.Now;
-            newSale.Product = newProd;
-            newSale.Quantity = model.Quantity;
-            newSale.Total = model.Product.Price * model.Quantity;
-            newSale.Code = generateSaleCode();
-            _context.Sales.Add(newSale);
-            await _context.SaveChangesAsync();
-
-            var product = await _context.Products.FindAsync(model.ProductId);
-            if (product != null)
-            {
-                product.Stock -= model.Quantity;
-            }
-
-            await _context.SaveChangesAsync();
-
-            return _mapper.Map<SaleResponse>(model);
         }
 
         public void Delete(int id)
@@ -97,7 +73,7 @@ namespace Business.Services
         private string generateSaleCode()
         {
             // Code aleatorio criptográficamente fuerte
-            var code = Convert.ToString(RandomNumberGenerator.GetBytes(64));
+            var code = Convert.ToString(RandomNumberGenerator.GetInt32(100001,999999));
 
             // Se asegura que el code es unico chequeando en la DB
             var codeIsUnique = !_context.Sales.Any(x => x.Code == code);

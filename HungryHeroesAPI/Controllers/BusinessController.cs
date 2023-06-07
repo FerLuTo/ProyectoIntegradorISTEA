@@ -20,7 +20,7 @@ namespace HungryHeroesAPI.Controllers
 
         [Authorize(Role.Business)]
        // [AllowAnonymous]
-        [HttpPost]
+        [HttpPost("Create")]
         public async Task<UserBusinessResponse> Create(UserBusinessRequest model)
             => await _businessService.Create(model);
 
