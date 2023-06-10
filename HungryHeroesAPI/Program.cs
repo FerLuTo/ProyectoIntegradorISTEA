@@ -39,6 +39,7 @@ var builder = WebApplication.CreateBuilder(args);
     services.AddScoped<IProductService, ProductService>();
     services.AddScoped<ISaleService, SaleService>();
     services.AddScoped<ISaleDetailService, SaleDetailService>();
+    services.AddScoped<IAzureBlobStorageService, AzureBlobStorageService>();
 
 
 }

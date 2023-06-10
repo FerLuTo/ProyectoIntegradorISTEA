@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,9 @@ namespace Entities.Models
         public virtual UserBusiness UserBusiness { get; set; }
 
         public ICollection<Sale> Sale { get; set; }
+
+        public string ImagePath { get; set; }
+        public string TechnicalDataSheet { get; set; }
 
     }
 }

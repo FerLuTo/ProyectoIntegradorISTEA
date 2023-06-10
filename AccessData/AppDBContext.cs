@@ -120,6 +120,14 @@ namespace AccessData
                 entity.Property(e => e.Price)
                       .HasColumnType("decimal(10,2)");
 
+                entity.Property(e => e.ImagePath)
+                .HasColumnType("varchar")
+                .HasMaxLength(100);
+
+                entity.Property(e => e.TechnicalDataSheet)
+                .HasColumnType("varchar")
+                .HasMaxLength(100);
+
             });
 
             modelBuilder.Entity<Sale>(entity =>
