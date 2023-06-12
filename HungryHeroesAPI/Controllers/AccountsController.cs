@@ -66,14 +66,12 @@ namespace HungryHeroesAPI.Controllers
             return Ok(new { message = "Password reset successful, you can now login" });
         }
 
-        #region Administradores
-
         /// <summary>
         /// Método para ver todas las cuentas existentes por id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Authorize(Role.Admin)]
+        [AllowAnonymous]
         [HttpGet("{id:int}")]
         public ActionResult<AccountResponse> GetById(int id)
         {
@@ -82,48 +80,16 @@ namespace HungryHeroesAPI.Controllers
         }
 
         /// <summary>
-        /// Método para devolver todas las cuentas que existen
-        /// </summary>
-        /// <returns></returns>
-        [Authorize(Role.Admin)]
-        [HttpGet("All")]
-        public ActionResult<IEnumerable<AccountResponse>> GetAll()
-        {
-            var accounts = _accountService.GetAll();
-            return Ok(accounts);
-        }
-
-        /// <summary>
-        /// Método para crear nuevas cuentas de administradores, sólo puede hacerlo los que tengan este rol
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        [Authorize(Role.Admin)]
-        [HttpPost("Create-Admin")]
-        public ActionResult<AccountResponse> Create(CreateRequest model)
-        {
-            var account = _accountService.Create(model);
-            return Ok(account);
-        }
-
-        /// <summary>
         /// Método para eliminar cualquier cuenta.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Authorize(Role.Admin)]
+        [AllowAnonymous]
         [HttpDelete("{id:int}")]
         public IActionResult Delete(int id)
         {
-            
-            if (id != Account.Id && Account.Role != Role.Admin)
-                return Unauthorized(new { message = "Unauthorized" });
-
             _accountService.Delete(id);
             return Ok(new { message = "Account deleted successfully" });
         }
-
-        #endregion
     }
-
 }
