@@ -1,7 +1,5 @@
 ﻿using Business.Interfaces;
 using Common.Attributes;
-using Entities.Enum;
-using Entities.Models;
 using Entities.ViewModels.Request;
 using Entities.ViewModels.Response;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +18,11 @@ namespace HungryHeroesAPI.Controllers
             _accountService = accountService;
         }
 
+        /// <summary>
+        /// Method to login in the site
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("login")]
         public ActionResult<AuthenticateResponse> Authenticate(AuthenticateRequest model)
@@ -29,6 +32,11 @@ namespace HungryHeroesAPI.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// Method to register new user
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("register")]
         public IActionResult Register(RegisterRequest model)
@@ -37,6 +45,12 @@ namespace HungryHeroesAPI.Controllers
             return Ok(new { message = "Registration successful, please check your email for verification instructions" });
         }
 
+        /// <summary>
+        /// Method that sends an email with
+        /// the token or link to activate an account
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("verify-email")]
         public IActionResult VerifyEmail(VerifyEmailRequest model)
@@ -45,6 +59,12 @@ namespace HungryHeroesAPI.Controllers
             return Ok(new { message = "Verification successful, you can now login" });
         }
 
+        /// <summary>
+        /// Method that when entering the email of the account 
+        /// sends a token or link to restore password
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("forgot-password")]
         public IActionResult ForgotPassword(ForgotPasswordRequest model)
@@ -54,7 +74,8 @@ namespace HungryHeroesAPI.Controllers
         }
 
         /// <summary>
-        /// Método para resetear la contraseña
+        /// Method that expects the token sent to the mail, 
+        /// new password and confirmation of the same
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -67,7 +88,20 @@ namespace HungryHeroesAPI.Controllers
         }
 
         /// <summary>
-        /// Método para ver todas las cuentas existentes por id
+        /// Method
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost("change-password")]
+        public IActionResult ChangePassword(ChangePasswordRequest model)
+        {
+            _accountService.ChangePassword(model);
+            return Ok(new { message = "Password reset successful, you can now login" });
+        }
+
+        /// <summary>
+        /// Method to get accounts by id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -80,7 +114,7 @@ namespace HungryHeroesAPI.Controllers
         }
 
         /// <summary>
-        /// Método para eliminar cualquier cuenta.
+        /// Method to delete account by id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>

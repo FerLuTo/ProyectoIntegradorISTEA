@@ -4,6 +4,7 @@ using Business.Interfaces;
 using Common;
 using Common.Exceptions;
 using Common.Helper;
+using Entities.Enum;
 using Entities.Models;
 using Entities.ViewModels.Request;
 using Entities.ViewModels.Response;
@@ -13,6 +14,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+
 
 namespace Business.Services
 {
@@ -43,14 +45,12 @@ namespace Business.Services
         {
             var account = _context.Accounts.SingleOrDefault(x => x.Email == model.Email);
 
-            // validación
             if (account == null || !account.IsVerified || !BCrypt.Net.BCrypt.Verify(model.Password, account.PasswordHash))
                 throw new BadRequestException("Email or password is incorrect");
 
-            // Autenticación realizada, genera jwt y se recargan los tokens
+            // Authentication done, generate jwt and tokens are reloaded
             var jwtToken = _jwtUtils.GenerateJwtToken(account);
 
-            // Guarda cambios en la DB
             _context.Update(account);
             _context.SaveChanges();
 
@@ -61,39 +61,37 @@ namespace Business.Services
 
         public void Register(RegisterRequest model, string origin)
         {
-            // Validación
             if (_context.Accounts.Any(x => x.Email == model.Email))
             {
-                // Envía mensaje al usuario para decirle que ya esta registrado ese email
-                sendAlreadyRegisteredEmail(model.Email, origin);
+                SendAlreadyRegisteredEmail(model.Email, origin);
                 return;
             }
 
-            // Mapeo para nueva cuenta
             var account = _mapper.Map<Account>(model);
 
-
             account.Created = DateTime.UtcNow;
-            account.VerificationToken = generateVerificationToken();
-
-            // Encripta contraseña 
+            account.VerificationToken = GenerateVerificationToken();
             account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+            account.IsActive = true;
 
-            // Guarda cuenta
+
             _context.Accounts.Add(account);
             _context.SaveChanges();
 
-            // Envía email
-            sendVerificationEmail(account, origin);
+            if (account.Role == Role.Client)
+            {
+                CreateUserClient(account.Id);
+            }
+            else {
+                CreateUserBusiness(account.Id);
+            }
+
+            SendVerificationEmail(account, origin);
         }
 
         public void VerifyEmail(string token)
         {
-            var account = _context.Accounts.SingleOrDefault(x => x.VerificationToken == token);
-
-            if (account is null)
-                throw new BadRequestException("Verification failed");
-
+            var account = _context.Accounts.SingleOrDefault(x => x.VerificationToken == token) ?? throw new BadRequestException("Verification failed");
             account.VerifiedAt = DateTime.UtcNow;
 
             _context.Accounts.Update(account);
@@ -104,30 +102,28 @@ namespace Business.Services
         {
             var account = _context.Accounts.SingleOrDefault(x => x.Email == model.Email);
 
-            // Siempre retorna una respuesta "Ok" para evitar enumeracion de email
             if (account is null) return;
 
-            // Crea un reinicio de token que expira luego de 1 dia
-            account.ResetToken = generateResetToken();
+            //Create a reset token that expires after 1 day
+            account.ResetToken = GenerateResetToken();
             account.ResetTokenExpires = DateTime.UtcNow.AddDays(1);
 
             _context.Accounts.Update(account);
             _context.SaveChanges();
 
-            // Envía email
-            sendPasswordResetEmail(account, origin);
+            SendPasswordResetEmail(account, origin);
         }
 
         public void ValidateResetToken(ValidateResetTokenRequest model)
         {
-            getAccountByResetToken(model.Token);
+            GetAccountByResetToken(model.Token);
         }
 
         public void ResetPassword(ResetPasswordRequest model)
         {
-            var account = getAccountByResetToken(model.Token);
+            var account = GetAccountByResetToken(model.Token);
 
-            // Actualiza contraseña y remueve el token anterior
+            //Update password and remove old token
             account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
             account.PasswordReset = DateTime.UtcNow;
             account.ResetTokenExpires = null;
@@ -136,71 +132,59 @@ namespace Business.Services
             _context.SaveChanges();
         }
 
+        public void ChangePassword(ChangePasswordRequest model)
+        {
+            var account = _context.Accounts.SingleOrDefault(x => x.Id == model.Id);
+
+            /*
+            var oldPassword = BCrypt.Net.BCrypt.HashPassword(model.OldPassword);
+            
+            if(oldPassword != account.PasswordHash)
+            {
+                throw new BadRequestException("The old password does not match what was loaded in the field");
+            }
+            */
+            account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+
+            _context.Accounts.Update(account);
+            _context.SaveChanges();
+        }
+
 
         public AccountResponse GetById(int id)
         {
-            var account = getAccount(id);
+            var account = GetAccount(id);
             return _mapper.Map<AccountResponse>(account);
         }
 
         public void Delete(int id)
         {
-            var account = getAccount(id);
-            _context.Accounts.Remove(account);
+            var account = GetAccount(id);
+            account.IsActive = false;
+
+            _context.Accounts.Update(account);
             _context.SaveChanges();
         }
 
-        //Devuelve todas las cuentas, sólo para rol Admin
-        public IEnumerable<AccountResponse> GetAll()
-        {
-            var accounts = _context.Accounts;
-            return _mapper.Map<IList<AccountResponse>>(accounts);
-        }
-
-        //Devuelve la cuenta creada por el rol Admin
-        public AccountResponse Create(CreateRequest model)
-        {
-            // validate
-            if (_context.Accounts.Any(x => x.Email == model.Email))
-                throw new BadRequestException($"Email '{model.Email}' is already registered");
-
-            // map model to new account object
-            var account = _mapper.Map<Account>(model);
-            account.Created = DateTime.UtcNow;
-            account.VerifiedAt = DateTime.UtcNow;
-
-            // hash password
-            account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
-
-            // save account
-            _context.Accounts.Add(account);
-            _context.SaveChanges();
-
-            return _mapper.Map<AccountResponse>(account);
-        }
 
 
+        #region Helper methods
 
-
-        // helper methods
-
-        private Account getAccount(int id)
+        private Account GetAccount(int id)
         {
             var account = _context.Accounts.Find(id);
-            if (account == null) throw new KeyNotFoundException("Account not found");
-            return account;
+            return account ?? throw new NotFoundException("Account not found");
         }
 
 
-        private Account getAccountByResetToken(string token)
+        private Account GetAccountByResetToken(string token)
         {
             var account = _context.Accounts.SingleOrDefault(x =>
                 x.ResetToken == token && x.ResetTokenExpires > DateTime.UtcNow);
-            if (account is null) throw new BadRequestException("Invalid token");
-            return account;
+            return account ?? throw new BadRequestException("Invalid token");
         }
 
-        private string generateJwtToken(Account account)
+        private string GenerateJwtToken(Account account)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
@@ -214,47 +198,40 @@ namespace Business.Services
             return tokenHandler.WriteToken(token);
         }
 
-        private string generateResetToken()
+        private string GenerateResetToken()
         {
-            // Token aleatorio criptográficamente fuerte
             var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
 
-            // Se asegura que el token es unico chequeando en la DB
             var tokenIsUnique = !_context.Accounts.Any(x => x.ResetToken == token);
             if (!tokenIsUnique)
-                return generateResetToken();
+                return GenerateResetToken();
 
             return token;
         }
 
-        private string generateVerificationToken()
+        private string GenerateVerificationToken()
         {
 
             var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
-
 
             var tokenIsUnique = !_context.Accounts.Any(x => x.VerificationToken == token);
             if (!tokenIsUnique)
-                return generateVerificationToken();
+                return GenerateVerificationToken();
 
             return token;
         }
 
-        private void sendVerificationEmail(Account account, string origin)
+        private void SendVerificationEmail(Account account, string origin)
         {
             string message;
             if (!string.IsNullOrEmpty(origin))
             {
-                // El origen existe si se envía desde la aplicacion de una sola pagina del navegador (e.g. Angular or React)
-                // Por eso se envia un link de verificación
                 var verifyUrl = $"{origin}/account/verify-email?token={account.VerificationToken}";
                 message = $@"<p>Please click the below link to verify your email address:</p>
                             <p><a href=""{verifyUrl}"">{verifyUrl}</a></p>";
             }
             else
             {
-                // falta el origen si la solicitud se envía directamente a la API (por ejemplo, desde Postman)
-                //  así que envía instrucciones para verificar directamente con API
                 message = $@"<p>Please use the below token to verify your email address </p>
                             <p><code>{account.VerificationToken}</code></p>";
             }
@@ -268,7 +245,7 @@ namespace Business.Services
             );
         }
 
-        private void sendAlreadyRegisteredEmail(string email, string origin)
+        private void SendAlreadyRegisteredEmail(string email, string origin)
         {
             string message;
             if (!string.IsNullOrEmpty(origin))
@@ -285,7 +262,7 @@ namespace Business.Services
             );
         }
 
-        private void sendPasswordResetEmail(Account account, string origin)
+        private void SendPasswordResetEmail(Account account, string origin)
         {
             string message;
             if (!string.IsNullOrEmpty(origin))
@@ -308,7 +285,27 @@ namespace Business.Services
             );
         }
 
+        private void CreateUserClient(int idAccount)
+        {
+            var client = new UserClient
+            {
+                AccountId = idAccount
+            };
+            _context.Add(client);
+            _context.SaveChanges();
+        }
 
+        private void CreateUserBusiness(int idAccount)
+        {
+            var business = new UserBusiness
+            {
+                AccountId = idAccount
+            };
 
+            _context.Add(business);
+            _context.SaveChanges();
+        }
+
+        #endregion
     }
 }

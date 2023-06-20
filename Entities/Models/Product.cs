@@ -1,11 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Entities.Models
+﻿namespace Entities.Models
 {
     public class Product
     {
@@ -22,7 +15,6 @@ namespace Entities.Models
         public ICollection<Sale> Sale { get; set; }
 
         public string ImagePath { get; set; }
-        public string TechnicalDataSheet { get; set; }
-
+       
     }
 }

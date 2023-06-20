@@ -17,9 +17,9 @@ namespace Common.Attributes
         }
 
         /// <summary>
-        /// Método para validar si el usuario está autorizado o no,
-        /// en el caso de no estar logueado o que el rol
-        /// no se el que corresponde devuelve "Unauthorized" y StatusCode 401 
+        /// Method to validate if the user is authorized or not,
+        /// in the case of not being logged in or that the role
+        /// not the correct one returns "Unauthorized" and StatusCode 401 
         /// </summary>
         /// <param name="filterContext"></param>
         /// <returns></returns>

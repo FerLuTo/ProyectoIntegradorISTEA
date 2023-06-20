@@ -38,21 +38,12 @@ var builder = WebApplication.CreateBuilder(args);
     services.AddScoped<IBusinessService, BusinessService>();
     services.AddScoped<IProductService, ProductService>();
     services.AddScoped<ISaleService, SaleService>();
-    services.AddScoped<ISaleDetailService, SaleDetailService>();
     services.AddScoped<IAzureBlobStorageService, AzureBlobStorageService>();
-
 
 }
 
 var app = builder.Build();
-/*
-//Migrate any DB changes on startup (includes initial DB creation)
-using (var scope = app.Services.CreateScope())
-{
-    var dataContext = scope.ServiceProvider.GetRequiredService<AppDBContext>();
-    dataContext.Database.Migrate();
-}
-*/
+
 // Configure the HTTP request pipeline.
 {
     app.UseSwagger();
@@ -64,9 +55,6 @@ using (var scope = app.Services.CreateScope())
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials());
-
-    //global error handler
-    app.UseMiddleware<ErrorHandlerMiddleware>();
 
     //custom jwt auth middleware
     app.UseMiddleware<JwtMiddleware>();

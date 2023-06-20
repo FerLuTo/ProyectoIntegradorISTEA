@@ -1,11 +1,4 @@
 ﻿using Entities.Enum;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 
 namespace Entities.Models
 {
@@ -22,12 +15,12 @@ namespace Entities.Models
         public DateTime? ResetTokenExpires { get; set; }
         public DateTime? PasswordReset { get; set; }
         public DateTime Created { get; set; }
-        public DateTime Updated { get; set; }
         public bool IsActive { get; set; }
 
         
         public virtual ICollection<UserBusiness> UsersBusiness { get; set; }
-        public virtual ICollection<UserClient> UsersClient { get; set; }
+        public virtual ICollection<UserClient> UsersClients { get; set; }
+        //public virtual ICollection<Sale>? Sales { get; set; }
         
     }
 }

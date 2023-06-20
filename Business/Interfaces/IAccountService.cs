@@ -16,9 +16,8 @@ namespace Business.Interfaces
         void ForgotPassword(ForgotPasswordRequest model, string origin);
         void ValidateResetToken(ValidateResetTokenRequest model);
         void ResetPassword(ResetPasswordRequest model);
+        void ChangePassword(ChangePasswordRequest model);
         AccountResponse GetById(int id);
         void Delete(int id);
-        IEnumerable<AccountResponse> GetAll();
-        AccountResponse Create(CreateRequest model);
     }
 }

@@ -20,7 +20,7 @@ namespace Entities.Models
         public long Cuit { get; set; }
         public string Alias { get; set; } = string.Empty;
         public string Web { get; set; } = string.Empty;
-        public bool IsActive { get; set; }
+        public bool ActiveProfile { get; set; }
 
         public virtual Account? Account { get; set; }
 
