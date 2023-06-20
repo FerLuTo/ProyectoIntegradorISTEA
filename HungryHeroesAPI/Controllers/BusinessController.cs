@@ -1,5 +1,7 @@
 ﻿using Business.Interfaces;
+using Business.Services;
 using Common.Attributes;
+using Common.Exceptions;
 using Entities.Enum;
 using Entities.ViewModels.Request;
 using Entities.ViewModels.Response;
@@ -18,18 +20,46 @@ namespace HungryHeroesAPI.Controllers
             _businessService = businessService;
         }
 
-        [Authorize(Role.Business)]
-       // [AllowAnonymous]
-        [HttpPost("Create")]
-        public async Task<UserBusinessResponse> Create(UserBusinessRequest model)
-            => await _businessService.Create(model);
+        /// <summary>
+        /// Method to get all business 
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(Role.Client)]
+        [HttpGet("All")]
+        public IEnumerable<UserBusinessResponse> GetBusiness()
+        {
+            if (Account.Role != Role.Client)
+            {
+                return (IEnumerable<UserBusinessResponse>)Unauthorized(new { message = "Unauthorized" });
+            }
+              
+            return _businessService.GetBusiness();
+        }
 
+        /// <summary>
+        ///  Method to get business by id
+        /// </summary>
+        /// <param name="idUserBusiness"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("{id:int}")]
+        public UserBusinessResponse GetBusinessById(int id)
+             => _businessService.GetBusinessById(id);
+
+        /// <summary>
+        /// Method to edit user profile
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        /// <exception cref="BadRequestException"></exception>
         [Authorize(Role.Business)]
-       // [AllowAnonymous]
         [HttpPut("{id:int}")]
         public async Task<UserBusinessResponse> Edit(int id, UserBusinessRequest model)
-            => await _businessService.Edit(id, model);
-
-
+        {
+            if (Account.Role != Role.Business)
+                throw new BadRequestException("Unauthorized");
+            return await _businessService.Edit(id, model);
+        }
     }
 }

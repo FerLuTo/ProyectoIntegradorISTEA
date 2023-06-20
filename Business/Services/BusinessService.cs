@@ -2,7 +2,6 @@
 using AutoMapper;
 using Business.Interfaces;
 using Common.Exceptions;
-using Entities.Models;
 using Entities.ViewModels.Request;
 using Entities.ViewModels.Response;
 
@@ -18,23 +17,23 @@ namespace Business.Services
             _context = context;
             _mapper = mapper;
         }
-
-        public async Task<UserBusinessResponse> Create(UserBusinessRequest model)
+        public IEnumerable<UserBusinessResponse> GetBusiness()
         {
-            _ = await _context.Accounts.FindAsync(model.AccountId) ?? throw new NotFoundException("Account not found");
+            var business = _context.UserBusinesses;
+            return _mapper.Map<IList<UserBusinessResponse>>(business);
+        }
 
-            var userBusiness = _mapper.Map<UserBusiness>(model);
-
-            _context.UserBusinesses.Add(userBusiness);
-            await _context.SaveChangesAsync();
-
-            return _mapper.Map<UserBusinessResponse>(userBusiness);
+        public UserBusinessResponse GetBusinessById(int id)
+        {
+            var userBusiness = _context.UserBusinesses.Find(id);
+            return userBusiness is null ? throw new NotFoundException("Business doesnt exists") : _mapper.Map<UserBusinessResponse>(userBusiness);
         }
 
         public async Task<UserBusinessResponse> Edit(int id, UserBusinessRequest model)
         {
             var userBusiness = await _context.UserBusinesses.FindAsync(id) ?? throw new NotFoundException("Account doesnt exists");
 
+            userBusiness.ActiveProfile = true; 
             _mapper.Map(model, userBusiness);
             _context.UserBusinesses.Update(userBusiness);
             await _context.SaveChangesAsync();
