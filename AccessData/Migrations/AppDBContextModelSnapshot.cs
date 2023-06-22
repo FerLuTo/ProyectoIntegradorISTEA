@@ -31,7 +31,7 @@ namespace AccessData.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -47,26 +47,24 @@ namespace AccessData.Migrations
                         .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("PasswordReset")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
 
                     b.Property<string>("ResetToken")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)");
 
                     b.Property<DateTime?>("ResetTokenExpires")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
 
                     b.Property<int>("Role")
                         .HasColumnType("int");
 
                     b.Property<string>("VerificationToken")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)");
 
                     b.Property<DateTime?>("VerifiedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
 
                     b.HasKey("Id");
 
@@ -82,11 +80,6 @@ namespace AccessData.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<string>("ImagePath")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
@@ -134,7 +127,7 @@ namespace AccessData.Migrations
 
                     b.Property<DateTime>("DateSale")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
+                        .HasColumnType("date")
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<bool>("Delivered")
@@ -158,8 +151,6 @@ namespace AccessData.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
 
                     b.HasIndex("UserClientId");
 
@@ -264,12 +255,6 @@ namespace AccessData.Migrations
 
             modelBuilder.Entity("Entities.Models.Sale", b =>
                 {
-                    b.HasOne("Entities.Models.Product", null)
-                        .WithMany("Sale")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Entities.Models.UserClient", "UserClient")
                         .WithMany("Sales")
                         .HasForeignKey("UserClientId")
@@ -306,11 +291,6 @@ namespace AccessData.Migrations
                     b.Navigation("UsersBusiness");
 
                     b.Navigation("UsersClients");
-                });
-
-            modelBuilder.Entity("Entities.Models.Product", b =>
-                {
-                    b.Navigation("Sale");
                 });
 
             modelBuilder.Entity("Entities.Models.UserBusiness", b =>

@@ -12,9 +12,8 @@
 
         public virtual UserBusiness UserBusiness { get; set; }
 
-        public ICollection<Sale> Sale { get; set; }
 
-        public string ImagePath { get; set; }
+        //public string ImagePath { get; set; }
        
     }
 }

@@ -5,8 +5,8 @@ using Common.Exceptions;
 using Entities.Models;
 using Entities.ViewModels.Request;
 using Entities.ViewModels.Response;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
+
 
 namespace Business.Services
 {
@@ -17,72 +17,77 @@ namespace Business.Services
 
         public async Task<SaleResponse> Create(SaleRequest model)
         {
-
-            _ = await _context.UserBusinesses.FindAsync(model.UserClientId) ?? throw new NotFoundException("User Client not found");
+            var product = await _context.Products.FindAsync(model.ProductId);
+            var userClient = await _context.UserClients.FindAsync(model.UserClientId);
+            var userBusiness = await _context.UserBusinesses.FindAsync(model.UserBusinessId);
+            if(product.Stock <= 0)
+            {
+                throw new BadRequestException("The product is out of stock ");
+            }
 
             var sale = _mapper.Map<Sale>(model);
-
-            await _context.SaveChangesAsync();
-
-            return _mapper.Map<SaleResponse>(sale);
-
-        }
-
-        public void Delete(int id)
-        {
-            var sale = _context.Sales.Find(id) ?? throw new NotFoundException("Sale doesn't exist");
-            _context.Sales.Remove(sale);
+            
+            sale.ProductId = product.Id;
+            sale.UserClientId = userClient.Id;
+            sale.UserClientEmail = userClient.Account.Email;
+            sale.BusinessName = userBusiness.BusinessName;
+            sale.Total = model.Quantity * product.Price;
+            sale.DateSale = DateTime.UtcNow;
+            sale.Code = GenerateSaleCode();
+            
+            _context.Sales.Add(sale);
             _context.SaveChanges();
+            return _mapper.Map<SaleResponse>(model);
 
         }
 
-        public async Task<SaleResponse> Edit(int id, SaleRequest model)
-        {
-            var sale = await _context.Sales.FindAsync(id) ?? throw new NotFoundException("Sale doesn't exist");
-            _mapper.Map(model, sale);
-            _context.Sales.Update(sale);
-            await _context.SaveChangesAsync();
-
-            return _mapper.Map<SaleResponse>(sale);
-        }
-
-        public IEnumerable<SaleResponse> GetAllSales()
-        {
-            var sales = _context.Sales;
-
-            return sales is null ? throw new NotFoundException("There's no sales yet") : _mapper.Map<IList<SaleResponse>>(sales);
-        }
-
-        public SaleResponse GetSaleById(int id)
-        {
-            var sale = _context.Sales.Find(id);
-            return sale is null ? throw new NotFoundException("Sale doesn't exists") : _mapper.Map<SaleResponse>(sale);
-        }
-
-        public IEnumerable<SaleResponse> GetAllByUserClientId(int idUserClient)
+        public IEnumerable<SaleResponse> GetSaleByUserClientId(int idUserClient)
         {
             var sale = _context.UserClients.Find(idUserClient);
             return sale is null ? throw new NotFoundException("Sale doesn't exists") : _mapper.Map<IList<SaleResponse>>(sale);
         }
 
-        public SaleDetailResponse GetSaleDetailById(int idSaleDetail)
+        public IEnumerable<SaleResponse> GetSaleByUserBusinessId(int idUserBusiness)
         {
-            var saleDetail = _context.SaleDetails.Find(idSaleDetail);
-            return saleDetail is null ? throw new NotFoundException("Sale detail doesn't exists") : _mapper.Map<SaleDetailResponse>(saleDetail);
+            var sale = _context.UserClients.Find(idUserBusiness);
+            return sale is null ? throw new NotFoundException("Sale doesn't exists") : _mapper.Map<IList<SaleResponse>>(sale);
         }
-        private string generateSaleCode()
-        {
-            // Code aleatorio criptográficamente fuerte
-            var code = Convert.ToString(RandomNumberGenerator.GetInt32(100001,999999));
 
-            // Se asegura que el code es unico chequeando en la DB
+
+        #region Helpers Methods
+
+        private string GenerateSaleCode()
+        {
+            var code = Convert.ToString(RandomNumberGenerator.GetInt32(100001, 999999));
+
             var codeIsUnique = !_context.Sales.Any(x => x.Code == code);
             if (!codeIsUnique)
-                return generateSaleCode();
+                return GenerateSaleCode();
 
             return code;
         }
 
+        public void VerifySale(string code, int idSale)
+        {
+            var sale = _context.Sales.SingleOrDefault(x => x.Code == code && x.Id == idSale) ?? throw new BadRequestException("Verification failed");
+            sale.Delivered = true;
+
+            _context.Sales.Update(sale);
+            _context.SaveChanges();
+        }
+
+        public void ModifyStock(int idProduct, int quantity)
+        {
+            var product = _context.Products.SingleOrDefault(x => x.Id == idProduct) ?? throw new BadRequestException("Product not found");
+            var checkStock = _context.Products.Any(x => x.Stock >= quantity) ? throw new BadRequestException("Product without stock") : product.Stock -= quantity;
+
+            product.Stock = checkStock;
+
+            _context.Products.Update(product);
+            _context.SaveChanges();
+        }
+
+        #endregion
 
     }
 }

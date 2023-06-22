@@ -34,20 +34,20 @@ namespace AccessData
                      .HasMaxLength(200);
 
                 entity.Property(e => e.VerifiedAt)
-                    .HasColumnType("datetime2");
+                    .HasColumnType("date");
 
                 entity.Property(e => e.ResetToken)
                      .HasColumnType("varchar")
                      .HasMaxLength(200);
 
                 entity.Property(e => e.ResetTokenExpires)
-                   .HasColumnType("datetime2");
+                   .HasColumnType("date");
 
                 entity.Property(e => e.PasswordReset)
-                   .HasColumnType("datetime2");
+                   .HasColumnType("date");
 
                 entity.Property(e => e.Created)
-                   .HasColumnType("datetime2");
+                   .HasColumnType("date");
 
             });
 
@@ -86,6 +86,10 @@ namespace AccessData
                 entity.Property(e => e.Web)
                     .HasColumnType("varchar")
                     .HasMaxLength(100);
+
+                entity.HasOne(e => e.Account)
+                      .WithMany(e => e.UsersBusiness)
+                      .HasForeignKey(e => e.AccountId);
             });
 
             modelBuilder.Entity<UserClient>(entity =>
@@ -103,18 +107,27 @@ namespace AccessData
 
                 entity.Property(e => e.Name)
                     .HasColumnType("varchar")
-                    .HasMaxLength(100);
+                    .HasMaxLength(100)
+                    .IsRequired();
 
                 entity.Property(e => e.Description)
                     .HasColumnType("varchar")
-                    .HasMaxLength(100);
+                    .HasMaxLength(100)
+                    .IsRequired();
+
+                entity.Property(e => e.Stock)
+                      .IsRequired();
 
                 entity.Property(e => e.Price)
-                      .HasColumnType("decimal(10,2)");
+                      .HasColumnType("decimal(10,2)")
+                      .IsRequired();
 
+                /*
                 entity.Property(e => e.ImagePath)
+                    .IsRequired(false)
                     .HasColumnType("varchar")
                     .HasMaxLength(100);
+                */
 
                 entity.HasOne(e => e.UserBusiness)
                     .WithMany(e => e.Products)
@@ -135,7 +148,7 @@ namespace AccessData
                       .HasMaxLength(100);
 
                 entity.Property(x => x.DateSale)
-                      .HasColumnType("datetime2")
+                      .HasColumnType("date")
                       .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.Code)

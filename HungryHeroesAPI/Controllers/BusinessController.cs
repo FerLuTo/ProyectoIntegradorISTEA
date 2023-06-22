@@ -30,7 +30,7 @@ namespace HungryHeroesAPI.Controllers
         {
             if (Account.Role != Role.Client)
             {
-                return (IEnumerable<UserBusinessResponse>)Unauthorized(new { message = "Unauthorized" });
+                throw new BadRequestException("Unauthorized");
             }
               
             return _businessService.GetBusiness();
@@ -39,7 +39,7 @@ namespace HungryHeroesAPI.Controllers
         /// <summary>
         ///  Method to get business by id
         /// </summary>
-        /// <param name="idUserBusiness"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("{id:int}")]

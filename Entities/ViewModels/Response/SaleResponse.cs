@@ -1,20 +1,13 @@
-﻿using Entities.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Entities.ViewModels.Response
+﻿namespace Entities.ViewModels.Response
 {
     public class SaleResponse
     {
+        public string Email { get; set; }
         public string BoxName { get; set; }
         public string FantasyName { get; set; }
         public string Code { get; set; }
-        public int Quantity { get; set; }
+        public DateTime DateSale { get; set; }
         public decimal Total { get; set; }
-
-        public ICollection<SaleDetailResponse>? SaleDetails { get; set; }
+        public bool Delivered { get; set; } = false;
     }
 }

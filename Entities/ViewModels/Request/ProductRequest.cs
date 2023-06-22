@@ -15,7 +15,6 @@ namespace Entities.ViewModels.Request
         public int Stock { get; set; }
         public int Price { get; set; }
 
-        public IFormFile Image { get; set; }
-        public IFormFile TechnicalDataSheet { get; set; }
+        //public IFormFile Image { get; set; }
     }
 }

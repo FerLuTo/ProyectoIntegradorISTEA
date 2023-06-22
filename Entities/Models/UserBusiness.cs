@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Entities.Models
 {
     public class UserBusiness
@@ -22,7 +17,7 @@ namespace Entities.Models
         public string Web { get; set; } = string.Empty;
         public bool ActiveProfile { get; set; }
 
-        public virtual Account? Account { get; set; }
+        public virtual Account Account { get; set; }
 
         public ICollection<Product>? Products { get; set; }
     }

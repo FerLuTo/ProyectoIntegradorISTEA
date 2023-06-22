@@ -1,5 +1,6 @@
 ﻿using Business.Interfaces;
 using Common.Attributes;
+using Common.Exceptions;
 using Entities.Enum;
 using Entities.ViewModels.Request;
 using Entities.ViewModels.Response;
@@ -13,36 +14,68 @@ namespace HungryHeroesAPI.Controllers
     public class SaleController : BaseController
     {
         private readonly ISaleService _saleService;
-        private readonly ISaleDetailService _saleDetailService;
 
-        public SaleController(ISaleService saleService, ISaleDetailService saleDetailService)
+        public SaleController(ISaleService saleService)
         {
             _saleService = saleService;
-            _saleDetailService = saleDetailService;
         }
 
+        /// <summary>
+        /// Method to create sale 
+        /// when the costumer confirms it
+        /// </summary>
+        /// <param name="sale"></param>
+        /// <returns></returns>
+        /// <exception cref="BadRequestException"></exception>
         [Authorize(Role.Client)]
-        //[AllowAnonymous]
         [HttpPost]
         public async Task<SaleResponse> Create(SaleRequest sale)
-            => await _saleService.Create(sale);
+        {
+            if (Account.Role != Role.Client)
+                throw new BadRequestException("Unauthorized");
+            return await _saleService.Create(sale);
+        }
 
+        /// <summary>
+        /// Method to get all purchases made by
+        /// the UserClient
+        /// </summary>
+        /// <param name="idUserClient"></param>
+        /// <returns></returns>
         [Authorize(Role.Client)]
-        //[AllowAnonymous]
-        [HttpPut("{id:int}")]
-        public async Task<SaleResponse> Edit(int id, SaleRequest model)
-            => await _saleService.Edit(id, model);
-
-        [Authorize(Role.Client)]
-        //[AllowAnonymous]
         [HttpGet("All/{idUserClient:int}")]
         public IEnumerable<SaleResponse> GetAllByUserClientId(int idUserClient)
-            => _saleService.GetAllByUserClientId(idUserClient);
+        {
+            if (Account.Role != Role.Client)
+                throw new BadRequestException("Unauthorized");
+            return _saleService.GetSaleByUserClientId(idUserClient);
+        }
 
+        /// <summary>
+        /// Method to verify the sale code.
+        /// When client withdraws box.
+        /// </summary>
+        /// <param name="code"></param>
+        [Authorize(Role.Business)]
+        [HttpPut("Verify-Sale")]
+        public void VerifySale(string code,int idSale)
+        {
+            if (Account.Role != Role.Business)
+                throw new BadRequestException("Unauthorized");
+            _saleService.VerifySale(code, idSale);
+        }
+
+        /// <summary>
+        /// Method temporary to modify stock
+        /// when client starts the purchase
+        /// </summary>
+        /// <param name="idProduct"></param>
         [AllowAnonymous]
-        [HttpGet("{id:int}")]
-        public SaleResponse GetSaleById(int id)
-            => _saleService.GetSaleById(id);
+        [HttpPut("Modify-Stock")]
+        public void ModifyStock(int idProduct, int quantity)
+        {
+            _saleService.ModifyStock(idProduct, quantity);
+        }
 
     }
 }

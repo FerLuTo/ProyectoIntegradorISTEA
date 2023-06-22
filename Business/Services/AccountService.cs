@@ -8,6 +8,7 @@ using Entities.Enum;
 using Entities.Models;
 using Entities.ViewModels.Request;
 using Entities.ViewModels.Response;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -45,7 +46,7 @@ namespace Business.Services
         {
             var account = _context.Accounts.SingleOrDefault(x => x.Email == model.Email);
 
-            if (account == null || !account.IsVerified || !BCrypt.Net.BCrypt.Verify(model.Password, account.PasswordHash))
+            if (account == null || !account.IsVerified || !BCrypt.Net.BCrypt.Verify(model.Password, account.PasswordHash) || account.IsActive is false)
                 throw new BadRequestException("Email or password is incorrect");
 
             // Authentication done, generate jwt and tokens are reloaded
@@ -62,7 +63,15 @@ namespace Business.Services
         public void Register(RegisterRequest model, string origin)
         {
             if (_context.Accounts.Any(x => x.Email == model.Email))
-            {
+            {/*
+                if (_context.Accounts.Any(x => x.Email == model.Email && x.IsActive == false))
+                {
+                    var userReturn = _mapper.Map<Account>(model);
+                    userReturn.IsActive = true;
+                    _context.Update(userReturn);
+                    _context.SaveChanges();
+                }
+                */
                 SendAlreadyRegisteredEmail(model.Email, origin);
                 return;
             }
@@ -173,7 +182,11 @@ namespace Business.Services
         private Account GetAccount(int id)
         {
             var account = _context.Accounts.Find(id);
-            return account ?? throw new NotFoundException("Account not found");
+            if(account is null ||  account.IsActive is false)
+            {
+                throw new NotFoundException("Account not found");
+            }
+            return account;
         }
 
 

@@ -22,6 +22,8 @@ namespace Business.Mapper
 
             CreateMap<RegisterRequest, Account>();
 
+            CreateMap<ChangePasswordRequest, Account>();
+
             CreateMap<Account, UserBusinessRequest>();
 
             #endregion
@@ -47,10 +49,6 @@ namespace Business.Mapper
             CreateMap<SaleRequest, Sale>();
             #endregion
 
-            #region SaleDetail
-            CreateMap<SaleDetail, SaleDetailResponse>();
-
-            #endregion
         }
 
     }

@@ -19,40 +19,73 @@ namespace HungryHeroesAPI.Controllers
             _productService = productService;
         }
 
+        /// <summary>
+        /// Method to get all products
+        /// by user business id
+        /// </summary>
+        /// <param name="idUserBusiness"></param>
+        /// <returns></returns>
         [AllowAnonymous]
-        [HttpGet("All")]
-        public IEnumerable<ProductResponse> GetProducts()
-            => _productService.GetProducts();
-
-        [Authorize(Role.Client)]
-        //[AllowAnonymous]
         [HttpGet("AllByBusiness/{idUserBusiness}")]
         public IEnumerable<ProductResponse> GetProductsByUserBusiness(int idUserBusiness)
           => _productService.GetProductsByUserBusiness(idUserBusiness);
 
-        
+        /// <summary>
+        /// Method to get product by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("{id:int}")]
         public ProductResponse GetProduct(int id)
             => _productService.GetProduct(id);
 
+        /// <summary>
+        /// Method to create new product
+        /// used by UserBusiness only
+        /// </summary>
+        /// <param name="product"></param>
+        /// <returns></returns>
+        /// <exception cref="BadHttpRequestException"></exception>
         [Authorize(Role.Business)]
-        //[AllowAnonymous]
         [HttpPost]
         public async Task<ProductResponse> Create(ProductRequest product)
-          => await _productService.Create(product);
+        {
+            if (Account.Role != Role.Business)
+                throw new BadHttpRequestException("Unauthorized");
+            return await _productService.Create(product);
+        }
 
+        /// <summary>
+        /// Method to Edit a product
+        /// used by UserBusiness only
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        /// <exception cref="BadHttpRequestException"></exception>
         [Authorize(Role.Business)]
-        //[AllowAnonymous]
         [HttpPut("{id:int}")]
         public async Task<ProductResponse> Edit(int id, ProductRequest model)
-         => await _productService.Edit(id, model);
+        {
+            if (Account.Role != Role.Business)
+                throw new BadHttpRequestException("Unauthorized");
+            return await _productService.Edit(id, model);
+        }
 
+        /// <summary>
+        /// Method to Delete a product 
+        /// used by UserBusiness only
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Authorize(Role.Business)]
-        //[AllowAnonymous]
         [HttpDelete("{id:int}")]
         public IActionResult Delete(int id)
         {
+            if (Account.Role != Role.Business)
+                return Unauthorized(new { message = "Unauthorized" });
+
             _productService.Delete(id);
             return Ok(new { message = "Product deleted successfully" });
         }
