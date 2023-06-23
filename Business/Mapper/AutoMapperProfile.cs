@@ -29,7 +29,19 @@ namespace Business.Mapper
             #endregion
 
             #region UserBusiness
-            CreateMap<UserBusiness, UserBusinessResponse>();
+            CreateMap<UserBusiness, UserBusinessResponse>()
+                .ForMember(x => x.UserBusinessId, map => map.MapFrom(src => src.Id))
+                .ForMember(x => x.FantasyName, map => map.MapFrom(src => src.FantasyName))
+                .ForMember(x => x.BusinessName, map => map.MapFrom(src => src.BusinessName))
+                .ForMember(x => x.Slogan, map => map.MapFrom(src => src.Slogan))
+                .ForMember(x => x.Description, map => map.MapFrom(src => src.Description))
+                .ForMember(x => x.Address, map => map.MapFrom(src => src.Address))
+                .ForMember(x => x.PostalCode, map => map.MapFrom(src => src.PostalCode))
+                .ForMember(x => x.Location, map => map.MapFrom(src => src.Location))
+                .ForMember(x => x.Cuit, map => map.MapFrom(src => src.Cuit))
+                .ForMember(x => x.Alias, map => map.MapFrom(src => src.Alias))
+                .ForMember(x => x.Web, map => map.MapFrom(src => src.Web))
+                .ForMember(x => x.ActiveProfile, map => map.MapFrom(src => src.ActiveProfile));
 
             CreateMap<UserBusinessRequest, UserBusiness>();
 
@@ -47,6 +59,16 @@ namespace Business.Mapper
             CreateMap<Sale, SaleResponse>();
 
             CreateMap<SaleRequest, Sale>();
+
+            CreateMap<Product, SaleResponse>()
+                .ForMember(x => x.BoxName, map => map.MapFrom(src => src.Name));
+
+            CreateMap<UserBusiness, SaleResponse>()
+                .ForMember(x => x.FantasyName, map => map.MapFrom(src => src.FantasyName));
+
+            CreateMap<Account, SaleResponse>()
+                .ForMember(x => x.Email, map => map.MapFrom(src => src.Email));
+            
             #endregion
 
         }

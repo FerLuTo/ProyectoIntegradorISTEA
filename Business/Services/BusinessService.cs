@@ -2,6 +2,7 @@
 using AutoMapper;
 using Business.Interfaces;
 using Common.Exceptions;
+using Entities.Models;
 using Entities.ViewModels.Request;
 using Entities.ViewModels.Response;
 
@@ -19,8 +20,10 @@ namespace Business.Services
         }
         public IEnumerable<UserBusinessResponse> GetBusiness()
         {
-            var business = _context.UserBusinesses;
-            return _mapper.Map<IList<UserBusinessResponse>>(business);
+            var business = _context.UserBusinesses
+                .Where(x => x.ActiveProfile != false)
+                .Select(x => _mapper.Map<UserBusinessResponse>(x));
+            return business ;
         }
 
         public UserBusinessResponse GetBusinessById(int id)

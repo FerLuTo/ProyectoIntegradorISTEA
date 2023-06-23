@@ -8,6 +8,7 @@ namespace Entities.ViewModels.Response
 {
     public class UserBusinessResponse
     {
+        public int UserBusinessId { get; set; }
         public string FantasyName { get; set; } = string.Empty;
         public string BusinessName { get; set; } = string.Empty;
         public string Slogan { get; set; } = string.Empty;
