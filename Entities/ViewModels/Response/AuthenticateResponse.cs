@@ -14,5 +14,7 @@ namespace Entities.ViewModels.Response
         public DateTime Created { get; set; }
         public bool IsVerified { get; set; }
         public string JwtToken { get; set; }
+        public int UserBusinessId { get; set; }
+        public int UserClientId { get; set; }
     }
 }

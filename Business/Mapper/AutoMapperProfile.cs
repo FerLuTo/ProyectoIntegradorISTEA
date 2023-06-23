@@ -26,6 +26,12 @@ namespace Business.Mapper
 
             CreateMap<Account, UserBusinessRequest>();
 
+            CreateMap<UserBusiness, AuthenticateResponse>()
+                .ForMember(x => x.UserBusinessId, map => map.MapFrom(src => src.Id));
+
+            CreateMap<UserClient, AuthenticateResponse>()
+                .ForMember(x => x.UserClientId, map => map.MapFrom(src => src.Id));
+
             #endregion
 
             #region UserBusiness
@@ -46,6 +52,7 @@ namespace Business.Mapper
             CreateMap<UserBusinessRequest, UserBusiness>();
 
             #endregion
+
 
             #region Product
 

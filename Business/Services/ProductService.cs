@@ -24,7 +24,10 @@ namespace Business.Services
 
         public IEnumerable<ProductResponse> GetProductsByUserBusiness(int idUserBusiness)
         {
-            var products = _context.Products.Any(x => x.UserBusiness.Id == idUserBusiness);
+            var products = _context.Products
+            .Where(x => x.UserBusiness.Id == idUserBusiness && x.IsActive != false )
+            .ToList();
+
             return _mapper.Map<IList<ProductResponse>>(products);
 
         }

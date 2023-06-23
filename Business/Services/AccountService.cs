@@ -8,7 +8,6 @@ using Entities.Enum;
 using Entities.Models;
 using Entities.ViewModels.Request;
 using Entities.ViewModels.Response;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -49,6 +48,16 @@ namespace Business.Services
             if (account == null || !account.IsVerified || !BCrypt.Net.BCrypt.Verify(model.Password, account.PasswordHash) || account.IsActive is false)
                 throw new BadRequestException("Email or password is incorrect");
 
+            if(!account.IsVerified)
+            {
+                throw new BadRequestException("Account not verified, please check your email and follow instructions");
+            }
+
+            if(!account.IsActive)
+            {
+                throw new NotFoundException("Account doesnt exists");
+            }
+
             // Authentication done, generate jwt and tokens are reloaded
             var jwtToken = _jwtUtils.GenerateJwtToken(account);
 
@@ -57,6 +66,7 @@ namespace Business.Services
 
             var response = _mapper.Map<AuthenticateResponse>(account);
             response.JwtToken = jwtToken;
+
             return response;
         }
 
@@ -168,7 +178,7 @@ namespace Business.Services
 
         public void Delete(int id)
         {
-            var account = GetAccount(id);
+            var account = _context.Accounts.Find(id);
             account.IsActive = false;
 
             _context.Accounts.Update(account);
