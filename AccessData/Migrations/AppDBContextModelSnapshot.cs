@@ -50,6 +50,7 @@ namespace AccessData.Migrations
                         .HasColumnType("date");
 
                     b.Property<string>("ResetToken")
+                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)");
 
@@ -60,6 +61,7 @@ namespace AccessData.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("VerificationToken")
+                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)");
 
