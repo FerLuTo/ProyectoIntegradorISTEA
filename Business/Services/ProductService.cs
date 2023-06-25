@@ -6,6 +6,8 @@ using Entities.Enum;
 using Entities.Models;
 using Entities.ViewModels.Request;
 using Entities.ViewModels.Response;
+using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Math.EC.Rfc7748;
 
 namespace Business.Services
 {
@@ -24,27 +26,39 @@ namespace Business.Services
 
         public IEnumerable<ProductResponse> GetProductsByUserBusiness(int idUserBusiness)
         {
-            var products = _context.Products
-            .Where(x => x.UserBusiness.Id == idUserBusiness && x.IsActive != false)
-            .ToList();
 
+            var products = _context.Products
+            .Where(x => x.UserBusiness.Id == idUserBusiness && x.IsActive !=false && x.UserBusiness.ActiveProfile != false && x.UserBusiness.IsActive != false)
+            .ToList();
+            
+            
             return _mapper.Map<IList<ProductResponse>>(products);
 
         }
 
-      /*  public ProductResponse GetProduct(int id)
+        public ProductResponse GetProduct(int id)
         {
             var product = _context.Products
                 .Where(x => x.Id == id && x.IsActive != false)
-                .Select(x => _mapper.Map<ProductResponse>(x));
+                .Select(x => _mapper.Map<ProductResponse>(x))
+                .FirstOrDefault();
+
+            if (product is null)
+            {
+                throw new KeyNotFoundException("Product doesnt exists");
+            }
 
             return product;
         }
 
-*/        public async Task<ProductResponse> Create(ProductRequest model)
+        public async Task<ProductResponse> Create(ProductRequest model)
         {
-            _ = await _context.UserBusinesses.FindAsync(model.UserBusinessId) ?? throw new NotFoundException("User not found");
+            var business = await _context.UserBusinesses.FindAsync(model.UserBusinessId); 
 
+            if(business is null || business.IsActive == false)
+            {
+                throw new KeyNotFoundException("User doesnt exists");
+            }
 
             var product = _mapper.Map<Product>(model);
 /*
@@ -64,7 +78,7 @@ namespace Business.Services
             var product = await _context.Products.FindAsync(id);
             if(product is null || product.IsActive is false)
             {
-                throw new NotFoundException("Product doesnt exists");
+                throw new KeyNotFoundException("Product doesnt exists");
             }   
 
             _mapper.Map(model, product);
