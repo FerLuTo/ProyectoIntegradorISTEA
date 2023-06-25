@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccessData.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20230624001344_Initial")]
-    partial class Initial
+    [Migration("20230625141237_Agrego_IsActive_Client-Business")]
+    partial class Agrego_IsActive_ClientBusiness
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -190,8 +190,9 @@ namespace AccessData.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<long>("Cuit")
-                        .HasColumnType("bigint");
+                    b.Property<string>("Cuit")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -202,6 +203,9 @@ namespace AccessData.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Location")
                         .IsRequired()
@@ -238,6 +242,9 @@ namespace AccessData.Migrations
 
                     b.Property<int>("AccountId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 

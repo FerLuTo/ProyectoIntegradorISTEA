@@ -35,10 +35,10 @@ namespace HungryHeroesAPI.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [AllowAnonymous]
+       /* [AllowAnonymous]
         [HttpGet("{id:int}")]
         public ProductResponse GetProduct(int id)
-            => _productService.GetProduct(id);
+            => _productService.GetProduct(id);*/
 
         /// <summary>
         /// Method to create new product

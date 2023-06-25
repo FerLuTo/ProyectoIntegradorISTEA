@@ -26,12 +26,6 @@ namespace Business.Mapper
 
             CreateMap<Account, UserBusinessRequest>();
 
-            CreateMap<UserBusiness, AuthenticateResponse>()
-                .ForMember(x => x.UserBusinessId, map => map.MapFrom(src => src.Id));
-
-            CreateMap<UserClient, AuthenticateResponse>()
-                .ForMember(x => x.UserClientId, map => map.MapFrom(src => src.Id));
-
             #endregion
 
             #region UserBusiness
@@ -44,19 +38,21 @@ namespace Business.Mapper
                 .ForMember(x => x.Address, map => map.MapFrom(src => src.Address))
                 .ForMember(x => x.PostalCode, map => map.MapFrom(src => src.PostalCode))
                 .ForMember(x => x.Location, map => map.MapFrom(src => src.Location))
-                .ForMember(x => x.Cuit, map => map.MapFrom(src => src.Cuit))
                 .ForMember(x => x.Alias, map => map.MapFrom(src => src.Alias))
                 .ForMember(x => x.Web, map => map.MapFrom(src => src.Web))
                 .ForMember(x => x.ActiveProfile, map => map.MapFrom(src => src.ActiveProfile));
 
             CreateMap<UserBusinessRequest, UserBusiness>();
 
+
             #endregion
 
 
             #region Product
 
-            CreateMap<Product, ProductResponse>();
+            CreateMap<Product, ProductResponse>()
+                .ForMember(x => x.ProductId, map => map.MapFrom(src => src.Id));
+
 
             CreateMap<ProductRequest, Product>();
 

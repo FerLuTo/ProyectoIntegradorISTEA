@@ -25,21 +25,23 @@ namespace Business.Services
         public IEnumerable<ProductResponse> GetProductsByUserBusiness(int idUserBusiness)
         {
             var products = _context.Products
-            .Where(x => x.UserBusiness.Id == idUserBusiness && x.IsActive != false )
+            .Where(x => x.UserBusiness.Id == idUserBusiness && x.IsActive != false)
             .ToList();
 
             return _mapper.Map<IList<ProductResponse>>(products);
 
         }
 
-        public ProductResponse GetProduct(int id)
+      /*  public ProductResponse GetProduct(int id)
         {
-            var product = _context.Products.Find(id);
+            var product = _context.Products
+                .Where(x => x.Id == id && x.IsActive != false)
+                .Select(x => _mapper.Map<ProductResponse>(x));
 
-            return product is null || product.IsActive is false ? throw new NotFoundException("Product doesnt exists") : _mapper.Map<ProductResponse>(product);
+            return product;
         }
 
-        public async Task<ProductResponse> Create(ProductRequest model)
+*/        public async Task<ProductResponse> Create(ProductRequest model)
         {
             _ = await _context.UserBusinesses.FindAsync(model.UserBusinessId) ?? throw new NotFoundException("User not found");
 

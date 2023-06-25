@@ -45,26 +45,30 @@ namespace Business.Services
         {
             var account = _context.Accounts.SingleOrDefault(x => x.Email == model.Email);
 
-            if (account == null || !account.IsVerified || !BCrypt.Net.BCrypt.Verify(model.Password, account.PasswordHash) || account.IsActive is false)
-                throw new BadRequestException("Email or password is incorrect");
+            if (account == null || !BCrypt.Net.BCrypt.Verify(model.Password, account.PasswordHash))
+                throw new AppException("Email or password is incorrect");
 
             if(!account.IsVerified)
             {
-                throw new BadRequestException("Account not verified, please check your email and follow instructions");
+                throw new AppException("Account not verified, please check your email and follow instructions");
             }
 
             if(!account.IsActive)
             {
-                throw new NotFoundException("Account doesnt exists");
+                throw new KeyNotFoundException("Account doesnt exists");
             }
 
             // Authentication done, generate jwt and tokens are reloaded
             var jwtToken = _jwtUtils.GenerateJwtToken(account);
+            var userBusinessId = _context.UserBusinesses.FirstOrDefault(x => x.AccountId == account.Id);   
+            var userClientId = _context.UserClients.FirstOrDefault(x => x.AccountId == account.Id);   
 
             _context.Update(account);
             _context.SaveChanges();
 
             var response = _mapper.Map<AuthenticateResponse>(account);
+            response.UserBusinessId = userBusinessId?.Id;
+            response.UserClientId = userClientId?.Id;
             response.JwtToken = jwtToken;
 
             return response;
@@ -155,14 +159,9 @@ namespace Business.Services
         {
             var account = _context.Accounts.SingleOrDefault(x => x.Id == model.Id);
 
-            /*
-            var oldPassword = BCrypt.Net.BCrypt.HashPassword(model.OldPassword);
-            
-            if(oldPassword != account.PasswordHash)
-            {
-                throw new BadRequestException("The old password does not match what was loaded in the field");
-            }
-            */
+            if (!BCrypt.Net.BCrypt.Verify(model.OldPassword, account.PasswordHash))
+                throw new AppException("Old password is incorrect");
+
             account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
 
             _context.Accounts.Update(account);
@@ -182,6 +181,21 @@ namespace Business.Services
             account.IsActive = false;
 
             _context.Accounts.Update(account);
+
+            var userBusiness = _context.UserBusinesses.Where(x => x.AccountId == id).ToList();
+            var userClient = _context.UserClients.Where(x => x.AccountId == id).ToList();
+
+            foreach(var entity in userBusiness)
+            {
+                entity.IsActive = false;
+                _context.UserBusinesses.Update(entity);
+            }
+
+            foreach (var entity in userClient)
+            {
+                entity.IsActive = false;
+                _context.UserClients.Update(entity);
+            }
             _context.SaveChanges();
         }
 
@@ -194,7 +208,7 @@ namespace Business.Services
             var account = _context.Accounts.Find(id);
             if(account is null ||  account.IsActive is false)
             {
-                throw new NotFoundException("Account not found");
+                throw new KeyNotFoundException("Account not found");
             }
             return account;
         }
@@ -204,7 +218,7 @@ namespace Business.Services
         {
             var account = _context.Accounts.SingleOrDefault(x =>
                 x.ResetToken == token && x.ResetTokenExpires > DateTime.UtcNow);
-            return account ?? throw new BadRequestException("Invalid token");
+            return account ?? throw new AppException("Invalid token");
         }
 
         private string GenerateJwtToken(Account account)

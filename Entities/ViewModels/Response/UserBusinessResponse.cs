@@ -16,7 +16,7 @@ namespace Entities.ViewModels.Response
         public string Address { get; set; } = string.Empty;
         public int PostalCode { get; set; }
         public string Location { get; set; } = string.Empty;
-        public long Cuit { get; set; }
+        public string Cuit { get; set; } = string.Empty;
         public string Alias { get; set; } = string.Empty;
         public string Web { get; set; } = string.Empty;
         public bool ActiveProfile { get; set; }

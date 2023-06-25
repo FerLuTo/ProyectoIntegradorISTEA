@@ -12,9 +12,10 @@ namespace Entities.Models
         public string Address { get; set; } = string.Empty;
         public int PostalCode { get; set; }
         public string Location { get; set; } = string.Empty;
-        public long Cuit { get; set; }
+        public string Cuit { get; set; } = string.Empty;
         public string Alias { get; set; } = string.Empty;
         public string Web { get; set; } = string.Empty;
+        public bool IsActive { get; set; }
         public bool ActiveProfile { get; set; }
 
         public virtual Account Account { get; set; }

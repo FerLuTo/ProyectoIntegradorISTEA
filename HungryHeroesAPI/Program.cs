@@ -56,6 +56,8 @@ var app = builder.Build();
         .AllowAnyHeader()
         .AllowCredentials());
 
+    app.UseMiddleware<ErrorHandlerMiddleware>();
+
     //custom jwt auth middleware
     app.UseMiddleware<JwtMiddleware>();
 

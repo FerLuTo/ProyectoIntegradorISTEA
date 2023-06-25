@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AccessData.Migrations
 {
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -45,7 +45,7 @@ namespace AccessData.Migrations
                     Address = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
                     PostalCode = table.Column<int>(type: "int", nullable: false),
                     Location = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false),
-                    Cuit = table.Column<long>(type: "bigint", nullable: false),
+                    Cuit = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Alias = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false),
                     Web = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
                     ActiveProfile = table.Column<bool>(type: "bit", nullable: false)
