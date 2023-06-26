@@ -28,8 +28,9 @@ namespace Business.Services
         {
 
             var products = _context.Products
-            .Where(x => x.UserBusiness.Id == idUserBusiness && x.IsActive !=false && x.UserBusiness.ActiveProfile != false && x.UserBusiness.IsActive != false)
+            .Where(x => x.UserBusiness.Id == idUserBusiness && x.IsActive !=false)
             .ToList();
+
             
             
             return _mapper.Map<IList<ProductResponse>>(products);
@@ -39,7 +40,7 @@ namespace Business.Services
         public ProductResponse GetProduct(int id)
         {
             var product = _context.Products
-                .Where(x => x.Id == id && x.IsActive != false)
+                .Where(x => x.Id == id && x.IsActive != false && x.UserBusiness.ActiveProfile != false)
                 .Select(x => _mapper.Map<ProductResponse>(x))
                 .FirstOrDefault();
 

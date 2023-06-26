@@ -21,15 +21,24 @@ namespace Business.Services
         public IEnumerable<UserBusinessResponse> GetBusiness()
         {
             var business = _context.UserBusinesses
-                .Where(x => x.ActiveProfile != false)
+                .Where(x => x.ActiveProfile != false && x.IsActive != false)
                 .Select(x => _mapper.Map<UserBusinessResponse>(x));
             return business ;
         }
 
         public UserBusinessResponse GetBusinessById(int id)
         {
-            var userBusiness = _context.UserBusinesses.Find(id);
-            return userBusiness is null ? throw new NotFoundException("Business doesnt exists") : _mapper.Map<UserBusinessResponse>(userBusiness);
+            var userBusiness = _context.UserBusinesses
+               .Where(x => x.Id == id && x.IsActive != false)
+               .Select(x => _mapper.Map<UserBusinessResponse>(x))
+               .FirstOrDefault();
+
+            if (userBusiness is null)
+            {
+                throw new KeyNotFoundException("User doesnt exists");
+            }
+
+            return userBusiness;
         }
 
         public async Task<UserBusinessResponse> Edit(int id, UserBusinessRequest model)
