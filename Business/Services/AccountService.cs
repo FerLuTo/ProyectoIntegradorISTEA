@@ -328,6 +328,7 @@ namespace Business.Services
             {
                 AccountId = idAccount
             };
+            client.IsActive = true;
             _context.Add(client);
             _context.SaveChanges();
         }
@@ -338,7 +339,7 @@ namespace Business.Services
             {
                 AccountId = idAccount
             };
-
+            business.IsActive = true;
             _context.Add(business);
             _context.SaveChanges();
         }
