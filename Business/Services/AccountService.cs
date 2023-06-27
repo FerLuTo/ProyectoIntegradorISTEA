@@ -77,17 +77,9 @@ namespace Business.Services
         public void Register(RegisterRequest model, string origin)
         {
             if (_context.Accounts.Any(x => x.Email == model.Email))
-            {/*
-                if (_context.Accounts.Any(x => x.Email == model.Email && x.IsActive == false))
-                {
-                    var userReturn = _mapper.Map<Account>(model);
-                    userReturn.IsActive = true;
-                    _context.Update(userReturn);
-                    _context.SaveChanges();
-                }
-                */
+            {
                 SendAlreadyRegisteredEmail(model.Email, origin);
-                return;
+                throw new AppException("Account already registered");
             }
 
             var account = _mapper.Map<Account>(model);
@@ -114,7 +106,7 @@ namespace Business.Services
 
         public void VerifyEmail(string token)
         {
-            var account = _context.Accounts.SingleOrDefault(x => x.VerificationToken == token) ?? throw new BadRequestException("Verification failed");
+            var account = _context.Accounts.SingleOrDefault(x => x.VerificationToken == token) ?? throw new AppException("Verification failed");
             account.VerifiedAt = DateTime.UtcNow;
 
             _context.Accounts.Update(account);
@@ -179,23 +171,22 @@ namespace Business.Services
         {
             var account = _context.Accounts.Find(id);
             account.IsActive = false;
-
             _context.Accounts.Update(account);
 
-            var userBusiness = _context.UserBusinesses.Where(x => x.AccountId == id).ToList();
-            var userClient = _context.UserClients.Where(x => x.AccountId == id).ToList();
-
-            foreach(var entity in userBusiness)
+            var userBusiness = _context.UserBusinesses.FirstOrDefault(x => x.AccountId == id);
+            if (userBusiness != null)
             {
-                entity.IsActive = false;
-                _context.UserBusinesses.Update(entity);
+                userBusiness.IsActive = false;
+                _context.UserBusinesses.Update(userBusiness);
             }
 
-            foreach (var entity in userClient)
+            var userClient = _context.UserClients.FirstOrDefault(x => x.AccountId == id);
+            if (userClient != null)
             {
-                entity.IsActive = false;
-                _context.UserClients.Update(entity);
+                userClient.IsActive = false;
+                _context.UserClients.Update(userClient);
             }
+
             _context.SaveChanges();
         }
 
@@ -228,7 +219,7 @@ namespace Business.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[] { new Claim("id", account.Id.ToString()) }),
-                Expires = DateTime.UtcNow.AddMinutes(15),
+                //Expires = DateTime.UtcNow.AddMinutes(15),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);

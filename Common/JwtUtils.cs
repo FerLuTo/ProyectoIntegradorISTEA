@@ -61,7 +61,7 @@ namespace Common
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = false,
                     ValidateAudience = false,
-                    // Pone el reloj en cero para que los tokens expiren exacamente a la hora de la expiración del token(En vez de 5 minutos después)
+                    // Pone el reloj en cero para que los tokens expiren exactamente a la hora de la expiración del token(En vez de 5 minutos después)
                     ClockSkew = TimeSpan.Zero
                 }, out SecurityToken validatedToken);
 
