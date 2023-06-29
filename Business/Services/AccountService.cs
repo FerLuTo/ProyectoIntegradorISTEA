@@ -74,27 +74,22 @@ namespace Business.Services
 
         public void Register(RegisterRequest model, string origin)
         {
-            if (_context.Accounts.Any(x => x.Email == model.Email && x.IsActive == false))
+            /*if (_context.Accounts.Any(x => x.Email == model.Email && x.IsActive == false))
             {
                 throw new AppException("The account is already registered but inactive, do you want to reactivate it?");
-            }
-            else if (_context.Accounts.Any(x => x.Email == model.Email))
+            }*/
+            if (_context.Accounts.Any(x => x.Email == model.Email))
             {
                 SendAlreadyRegisteredEmail(model.Email, origin);
                 throw new AppException("Account already registered");
             }
-            else
-            {
-
-
-
+            
                 var account = _mapper.Map<Account>(model);
 
                 account.Created = DateTime.UtcNow;
                 account.VerificationToken = GenerateVerificationToken();
                 account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
                 account.IsActive = true;
-
 
                 _context.Accounts.Add(account);
                 _context.SaveChanges();
@@ -109,7 +104,7 @@ namespace Business.Services
                 }
 
                 SendVerificationEmail(account, origin);
-            }
+            
         }
 
         public void VerifyEmail(string token)
@@ -351,7 +346,7 @@ namespace Business.Services
             _context.Add(business);
             _context.SaveChanges();
         }
-
+/*
         public void ReActivateAccount(int id)
         {
   
@@ -386,7 +381,7 @@ namespace Business.Services
             
 
             
-        }
+        }*/
 
         #endregion
     }

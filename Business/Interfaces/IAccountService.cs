@@ -19,6 +19,6 @@ namespace Business.Interfaces
         void ChangePassword(ChangePasswordRequest model);
         AccountResponse GetById(int id);
         void Delete(int id);
-        void ReActivateAccount(int id);
+        //void ReActivateAccount(int id);
     }
 }
