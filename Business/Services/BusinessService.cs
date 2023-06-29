@@ -2,6 +2,7 @@
 using AutoMapper;
 using Business.Interfaces;
 using Common.Exceptions;
+using Common.Helper;
 using Entities.Models;
 using Entities.ViewModels.Request;
 using Entities.ViewModels.Response;
@@ -23,6 +24,7 @@ namespace Business.Services
             var business = _context.UserBusinesses
                 .Where(x => x.ActiveProfile != false && x.IsActive != false)
                 .Select(x => _mapper.Map<UserBusinessResponse>(x));
+
             return business ;
         }
 
@@ -33,17 +35,18 @@ namespace Business.Services
                .Select(x => _mapper.Map<UserBusinessResponse>(x))
                .FirstOrDefault();
 
-            if (userBusiness is null)
-            {
-                throw new KeyNotFoundException("User doesnt exists");
-            }
-
-            return userBusiness;
+            return userBusiness is null ? throw new KeyNotFoundException("User doesnt exists") : userBusiness;
         }
 
         public async Task<UserBusinessResponse> Edit(int id, UserBusinessRequest model)
         {
-            var userBusiness = await _context.UserBusinesses.FindAsync(id) ?? throw new NotFoundException("Account doesnt exists");
+            var userBusiness = await _context.UserBusinesses.FindAsync(id) ?? throw new KeyNotFoundException("Account doesnt exists");
+
+            CheckIfNull(model.FantasyName, "FantasyName is null");
+            CheckIfNull(model.BusinessName, "BusinessName is null");
+            CheckIfNull(model.Address, "Address is null");
+            CheckIfNull(model.Cuit, "Cuit is null");
+            CheckIfNull(model.Alias, "Alias is null");
 
             userBusiness.ActiveProfile = true; 
             _mapper.Map(model, userBusiness);
@@ -51,6 +54,14 @@ namespace Business.Services
             await _context.SaveChangesAsync();
 
             return _mapper.Map<UserBusinessResponse>(userBusiness);
+        }
+
+        void CheckIfNull(object propertyValue, string errorMessage)
+        {
+            if (propertyValue is null)
+            {
+                throw new AppException(errorMessage);
+            }
         }
 
     }

@@ -125,5 +125,17 @@ namespace HungryHeroesAPI.Controllers
             _accountService.Delete(id);
             return Ok(new { message = "Account deleted successfully" });
         }
+
+        /// <summary>
+        /// Method to reactive account
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="option"></param>
+        [AllowAnonymous]
+        [HttpPut("ReactivateAccount/{id}")]
+        public void ReActivateAccount(int id)
+        {
+            _accountService.ReActivateAccount(id);
+        }
     }
 }

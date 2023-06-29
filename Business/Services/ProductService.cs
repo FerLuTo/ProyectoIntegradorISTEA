@@ -2,6 +2,7 @@
 using AutoMapper;
 using Business.Interfaces;
 using Common.Exceptions;
+using Common.Helper;
 using Entities.Enum;
 using Entities.Models;
 using Entities.ViewModels.Request;
@@ -31,8 +32,6 @@ namespace Business.Services
             .Where(x => x.UserBusiness.Id == idUserBusiness && x.IsActive !=false)
             .ToList();
 
-            
-            
             return _mapper.Map<IList<ProductResponse>>(products);
 
         }
@@ -40,14 +39,12 @@ namespace Business.Services
         public ProductResponse GetProduct(int id)
         {
             var product = _context.Products
-                .Where(x => x.Id == id && x.IsActive != false && x.UserBusiness.ActiveProfile != false)
+                .Where(x => x.Id == id && x.IsActive != false)
                 .Select(x => _mapper.Map<ProductResponse>(x))
                 .FirstOrDefault();
 
             if (product is null)
-            {
                 throw new KeyNotFoundException("Product doesnt exists");
-            }
 
             return product;
         }
@@ -57,9 +54,7 @@ namespace Business.Services
             var business = await _context.UserBusinesses.FindAsync(model.UserBusinessId); 
 
             if(business is null || business.IsActive == false)
-            {
                 throw new KeyNotFoundException("User doesnt exists");
-            }
 
             var product = _mapper.Map<Product>(model);
 /*
@@ -67,7 +62,17 @@ namespace Business.Services
             {
                 product.ImagePath = await _azureBlobStorageService.UploadAsync(model.Image, ContainerEnum.IMAGES);
             }
-*/          product.IsActive = true;    
+            */
+
+            CheckIfNull(model.Name, "Name is null");
+            CheckIfNull(model.Description, "Description is null");
+            CheckIfNull(model.Stock, "Stock is null");
+            CheckIfNull(model.Price, "Price is null");
+          
+
+
+
+            product.IsActive = true;    
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
@@ -78,9 +83,7 @@ namespace Business.Services
         {
             var product = await _context.Products.FindAsync(id);
             if(product is null || product.IsActive is false)
-            {
                 throw new KeyNotFoundException("Product doesnt exists");
-            }   
 
             _mapper.Map(model, product);
 /*
@@ -95,13 +98,11 @@ namespace Business.Services
             return _mapper.Map<ProductResponse>(product);
         }
 
-        public async void Delete(int id)
+        public  void Delete(int id)
         {
             var product = _context.Products.Find(id);
             if (product is null || product.IsActive is false)
-            {
-                throw new NotFoundException("Product doesnt exists");
-            }
+                throw new KeyNotFoundException("Product doesnt exists");
             /*
             if (product != null)
             {
@@ -115,6 +116,14 @@ namespace Business.Services
             product.IsActive = false;
             _context.Products.Update(product);
             _context.SaveChanges();
+        }
+
+        void CheckIfNull(object propertyValue, string errorMessage)
+        {
+            if (propertyValue is null)
+            {
+                throw new AppException(errorMessage);
+            }
         }
     }
 }

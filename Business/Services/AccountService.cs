@@ -1,5 +1,6 @@
 ﻿using AccessData;
 using AutoMapper;
+using Azure.Messaging;
 using Business.Interfaces;
 using Common;
 using Common.Exceptions;
@@ -8,6 +9,8 @@ using Entities.Enum;
 using Entities.Models;
 using Entities.ViewModels.Request;
 using Entities.ViewModels.Response;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -48,20 +51,15 @@ namespace Business.Services
             if (account == null || !BCrypt.Net.BCrypt.Verify(model.Password, account.PasswordHash))
                 throw new AppException("Email or password is incorrect");
 
-            if(!account.IsVerified)
-            {
+            if (!account.IsVerified)
                 throw new AppException("Account not verified, please check your email and follow instructions");
-            }
 
-            if(!account.IsActive)
-            {
-                throw new KeyNotFoundException("Account doesnt exists");
-            }
+            if (!account.IsActive)
+                throw new KeyNotFoundException("Account doesn't exist");
 
-            // Authentication done, generate jwt and tokens are reloaded
             var jwtToken = _jwtUtils.GenerateJwtToken(account);
-            var userBusinessId = _context.UserBusinesses.FirstOrDefault(x => x.AccountId == account.Id);   
-            var userClientId = _context.UserClients.FirstOrDefault(x => x.AccountId == account.Id);   
+            var userBusinessId = _context.UserBusinesses.FirstOrDefault(x => x.AccountId == account.Id);
+            var userClientId = _context.UserClients.FirstOrDefault(x => x.AccountId == account.Id);
 
             _context.Update(account);
             _context.SaveChanges();
@@ -76,32 +74,42 @@ namespace Business.Services
 
         public void Register(RegisterRequest model, string origin)
         {
-            if (_context.Accounts.Any(x => x.Email == model.Email))
+            if (_context.Accounts.Any(x => x.Email == model.Email && x.IsActive == false))
+            {
+                throw new AppException("The account is already registered but inactive, do you want to reactivate it?");
+            }
+            else if (_context.Accounts.Any(x => x.Email == model.Email))
             {
                 SendAlreadyRegisteredEmail(model.Email, origin);
                 throw new AppException("Account already registered");
             }
-
-            var account = _mapper.Map<Account>(model);
-
-            account.Created = DateTime.UtcNow;
-            account.VerificationToken = GenerateVerificationToken();
-            account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
-            account.IsActive = true;
-
-
-            _context.Accounts.Add(account);
-            _context.SaveChanges();
-
-            if (account.Role == Role.Client)
+            else
             {
-                CreateUserClient(account.Id);
-            }
-            else {
-                CreateUserBusiness(account.Id);
-            }
 
-            SendVerificationEmail(account, origin);
+
+
+                var account = _mapper.Map<Account>(model);
+
+                account.Created = DateTime.UtcNow;
+                account.VerificationToken = GenerateVerificationToken();
+                account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+                account.IsActive = true;
+
+
+                _context.Accounts.Add(account);
+                _context.SaveChanges();
+
+                if (account.Role == Role.Client)
+                {
+                    CreateUserClient(account.Id);
+                }
+                else
+                {
+                    CreateUserBusiness(account.Id);
+                }
+
+                SendVerificationEmail(account, origin);
+            }
         }
 
         public void VerifyEmail(string token)
@@ -177,6 +185,14 @@ namespace Business.Services
             if (userBusiness != null)
             {
                 userBusiness.IsActive = false;
+                if(userBusiness.Products != null)
+                foreach (var product in userBusiness.Products.Where(x => x.UserBusinessId == userBusiness.Id))
+                {
+                    product.IsActive = false;
+                        _context.Products.Update(product);
+                        _context.SaveChanges();
+
+                    }
                 _context.UserBusinesses.Update(userBusiness);
             }
 
@@ -198,9 +214,8 @@ namespace Business.Services
         {
             var account = _context.Accounts.Find(id);
             if(account is null ||  account.IsActive is false)
-            {
                 throw new KeyNotFoundException("Account not found");
-            }
+
             return account;
         }
 
@@ -208,7 +223,8 @@ namespace Business.Services
         private Account GetAccountByResetToken(string token)
         {
             var account = _context.Accounts.SingleOrDefault(x =>
-                x.ResetToken == token && x.ResetTokenExpires > DateTime.UtcNow);
+                          x.ResetToken == token && x.ResetTokenExpires > DateTime.UtcNow);
+
             return account ?? throw new AppException("Invalid token");
         }
 
@@ -223,6 +239,7 @@ namespace Business.Services
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
+
             return tokenHandler.WriteToken(token);
         }
 
@@ -333,6 +350,42 @@ namespace Business.Services
             business.IsActive = true;
             _context.Add(business);
             _context.SaveChanges();
+        }
+
+        public void ReActivateAccount(int id)
+        {
+  
+
+                var account = _context.Accounts.Find(id);
+                account.IsActive = true;
+
+                var userBusiness = _context.UserBusinesses.FirstOrDefault(x => x.AccountId == id);
+                if (userBusiness != null)
+                {
+                    userBusiness.IsActive = true;
+                    if (userBusiness.Products != null)
+                        foreach (var product in userBusiness.Products.Where(x => x.UserBusinessId == userBusiness.Id))
+                        {
+                            product.IsActive = true;
+                            _context.Products.Update(product);
+                            _context.SaveChanges();
+
+                        }
+                    _context.UserBusinesses.Update(userBusiness);
+                }
+
+                var userClient = _context.UserClients.FirstOrDefault(x => x.AccountId == id);
+                if (userClient != null)
+                {
+                    userClient.IsActive = true;
+                    _context.UserClients.Update(userClient);
+                }
+
+                _context.SaveChanges();
+            
+            
+
+            
         }
 
         #endregion
