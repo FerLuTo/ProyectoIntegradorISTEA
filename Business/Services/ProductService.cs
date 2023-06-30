@@ -56,6 +56,11 @@ namespace Business.Services
             if(business is null || business.IsActive == false)
                 throw new KeyNotFoundException("User doesnt exists");
 
+            if(model.Stock <= 0 || model.Price <= 0)
+            {
+                throw new AppException("The fields must have data");
+            }
+
             var product = _mapper.Map<Product>(model);
 /*
             if (model.Image != null)
@@ -63,14 +68,6 @@ namespace Business.Services
                 product.ImagePath = await _azureBlobStorageService.UploadAsync(model.Image, ContainerEnum.IMAGES);
             }
             */
-
-            CheckIfNull(model.Name, "Name is null");
-            CheckIfNull(model.Description, "Description is null");
-            CheckIfNull(model.Stock, "Stock is null");
-            CheckIfNull(model.Price, "Price is null");
-          
-
-
 
             product.IsActive = true;    
             _context.Products.Add(product);
@@ -118,12 +115,5 @@ namespace Business.Services
             _context.SaveChanges();
         }
 
-        void CheckIfNull(object propertyValue, string errorMessage)
-        {
-            if (propertyValue is null)
-            {
-                throw new AppException(errorMessage);
-            }
-        }
     }
 }

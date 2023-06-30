@@ -42,11 +42,18 @@ namespace Business.Services
         {
             var userBusiness = await _context.UserBusinesses.FindAsync(id) ?? throw new KeyNotFoundException("Account doesnt exists");
 
-            CheckIfNull(model.FantasyName, "FantasyName is null");
-            CheckIfNull(model.BusinessName, "BusinessName is null");
-            CheckIfNull(model.Address, "Address is null");
-            CheckIfNull(model.Cuit, "Cuit is null");
-            CheckIfNull(model.Alias, "Alias is null");
+            if(userBusiness.FantasyName is null || userBusiness.BusinessName is null || userBusiness.Slogan is null 
+               || userBusiness.Description is null || userBusiness.Address is null || userBusiness.Location is null
+               || userBusiness.Cuit is null || userBusiness.Alias is null || userBusiness.Web is null)
+                
+            {
+                throw new AppException("The fields must have data");
+            }
+
+            if(userBusiness.PostalCode <= 0)
+            {
+                throw new AppException("The field must have data");
+            }
 
             userBusiness.ActiveProfile = true; 
             _mapper.Map(model, userBusiness);
@@ -54,14 +61,6 @@ namespace Business.Services
             await _context.SaveChangesAsync();
 
             return _mapper.Map<UserBusinessResponse>(userBusiness);
-        }
-
-        void CheckIfNull(object propertyValue, string errorMessage)
-        {
-            if (propertyValue is null)
-            {
-                throw new AppException(errorMessage);
-            }
         }
 
     }

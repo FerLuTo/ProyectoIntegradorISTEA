@@ -9,16 +9,16 @@ namespace Entities.ViewModels.Response
     public class UserBusinessResponse
     {
         public int UserBusinessId { get; set; }
-        public string FantasyName { get; set; } = string.Empty;
-        public string BusinessName { get; set; } = string.Empty;
-        public string Slogan { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public string Address { get; set; } = string.Empty;
+        public string FantasyName { get; set; }
+        public string BusinessName { get; set; }
+        public string Slogan { get; set; }
+        public string Description { get; set; } 
+        public string Address { get; set; } 
         public int PostalCode { get; set; }
-        public string Location { get; set; } = string.Empty;
-        public string Cuit { get; set; } = string.Empty;
-        public string Alias { get; set; } = string.Empty;
-        public string Web { get; set; } = string.Empty;
+        public string Location { get; set; } 
+        public string Cuit { get; set; } 
+        public string Alias { get; set; }
+        public string Web { get; set; }
         public bool ActiveProfile { get; set; }
 
 
