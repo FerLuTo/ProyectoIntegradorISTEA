@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AccessData.Migrations
 {
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -48,6 +48,7 @@ namespace AccessData.Migrations
                     Cuit = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Alias = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false),
                     Web = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     ActiveProfile = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -67,7 +68,8 @@ namespace AccessData.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    AccountId = table.Column<int>(type: "int", nullable: false)
+                    AccountId = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -111,13 +113,15 @@ namespace AccessData.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProductId = table.Column<int>(type: "int", nullable: false),
-                    BusinessName = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
+                    BusinessId = table.Column<int>(type: "int", nullable: false),
                     UserClientId = table.Column<int>(type: "int", nullable: false),
+                    BoxName = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
+                    BusinessName = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
                     UserClientEmail = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
                     DateSale = table.Column<DateTime>(type: "date", nullable: false, defaultValueSql: "(getdate())"),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     Total = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    Code = table.Column<string>(type: "varchar", nullable: false),
+                    Code = table.Column<string>(type: "varchar(6)", maxLength: 6, nullable: false),
                     Delivered = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>

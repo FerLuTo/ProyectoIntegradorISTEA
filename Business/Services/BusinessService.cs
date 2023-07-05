@@ -22,8 +22,9 @@ namespace Business.Services
         public IEnumerable<UserBusinessResponse> GetBusiness()
         {
             var business = _context.UserBusinesses
-                .Where(x => x.ActiveProfile != false && x.IsActive != false)
+                .Where(x => x.ActiveProfile && x.IsActive)
                 .Select(x => _mapper.Map<UserBusinessResponse>(x));
+                //.OrderBy(x => x.FantasyName);
 
             return business ;
         }
@@ -49,12 +50,12 @@ namespace Business.Services
             {
                 throw new AppException("The fields must have data");
             }
-
+            /*
             if(userBusiness.PostalCode <= 0)
             {
-                throw new AppException("The field must have data");
+                throw new AppException($"The field {userBusiness.PostalCode} must have data");
             }
-
+            */
             userBusiness.ActiveProfile = true; 
             _mapper.Map(model, userBusiness);
             _context.UserBusinesses.Update(userBusiness);

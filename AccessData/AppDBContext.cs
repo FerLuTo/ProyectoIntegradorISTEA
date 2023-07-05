@@ -61,31 +61,38 @@ namespace AccessData
 
                 entity.Property(e => e.BusinessName)
                       .HasColumnType("varchar")
-                      .HasMaxLength(100);
+                      .HasMaxLength(100)
+                      .IsRequired();
 
                 entity.Property(e => e.Slogan)
                     .HasColumnType("varchar")
-                    .HasMaxLength(200);
+                    .HasMaxLength(200)
+                    .IsRequired();
 
                 entity.Property(e => e.Description)
                     .HasColumnType("varchar")
-                    .HasMaxLength(200);
+                    .HasMaxLength(200)
+                    .IsRequired();
 
                 entity.Property(e => e.Address)
                     .HasColumnType("varchar")
-                    .HasMaxLength(100);
+                    .HasMaxLength(100)
+                    .IsRequired();
 
                 entity.Property(e => e.Location)
                     .HasColumnType("varchar")
-                    .HasMaxLength(50);
+                    .HasMaxLength(50)
+                    .IsRequired();
 
                 entity.Property(e => e.Alias)
                     .HasColumnType("varchar")
-                    .HasMaxLength(50);
+                    .HasMaxLength(50)
+                    .IsRequired();
 
                 entity.Property(e => e.Web)
                     .HasColumnType("varchar")
-                    .HasMaxLength(100);
+                    .HasMaxLength(100)
+                    .IsRequired();
 
                 entity.HasOne(e => e.Account)
                       .WithMany(e => e.UsersBusiness)
@@ -139,6 +146,10 @@ namespace AccessData
             {
                 entity.HasKey(x => x.Id);
 
+                entity.Property(e => e.BoxName)
+                      .HasColumnType("varchar")
+                      .HasMaxLength(100);
+
                 entity.Property(e => e.BusinessName)
                       .HasColumnType("varchar")
                       .HasMaxLength(100);
@@ -152,7 +163,8 @@ namespace AccessData
                       .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.Code)
-                      .HasColumnType("varchar");
+                      .HasColumnType("varchar")
+                      .HasMaxLength(6);
 
                 entity.Property(e => e.Total)
                       .HasColumnType("decimal(10,2)");

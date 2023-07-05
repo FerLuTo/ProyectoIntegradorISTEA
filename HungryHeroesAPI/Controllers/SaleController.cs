@@ -29,11 +29,23 @@ namespace HungryHeroesAPI.Controllers
         /// <exception cref="BadRequestException"></exception>
         [Authorize(Role.Client)]
         [HttpPost]
-        public async Task<SaleResponse> Create(SaleRequest sale)
+        public int Create(SaleRequest sale)
         {
             if (Account.Role != Role.Client)
                 throw new BadRequestException("Unauthorized");
-            return await _saleService.Create(sale);
+            return _saleService.Create(sale);
+        }
+
+        /// <summary>
+        /// Method to get sale by id 
+        /// </summary>
+        /// <param name="idSale"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("{idSale:int}")]
+        public SaleResponse SaleDetail(int idSale)
+        {
+            return _saleService.SaleDetail(idSale);
         }
 
         /// <summary>
