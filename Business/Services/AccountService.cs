@@ -80,7 +80,6 @@ namespace Business.Services
             }*/
             if (_context.Accounts.Any(x => x.Email == model.Email))
             {
-                SendAlreadyRegisteredEmail(model.Email, origin);
                 throw new AppException("Account already registered");
             }
             
@@ -281,23 +280,6 @@ namespace Business.Services
                 subject: "Hungry Heroes - Verify Email",
                 html: $@"<h4>Verify Email</h4>
                         <p>Thanks for registering!</p>
-                        {message}"
-            );
-        }
-
-        private void SendAlreadyRegisteredEmail(string email, string origin)
-        {
-            string message;
-            if (!string.IsNullOrEmpty(origin))
-                message = $@"<p>If you don't know your password please visit the <a href=""{origin}/account/forgot-password"">forgot password</a> page.</p>";
-            else
-                message = "<p>If you don't know your password you can reset it via the <code>/accounts/forgot-password</code> api route.</p>";
-
-            _emailService.Send(
-                to: email,
-                subject: "Hungry Heroes - Email Already Registered",
-                html: $@"<h4>Email Already Registered</h4>
-                        <p>Your email <strong>{email}</strong> is already registered.</p>
                         {message}"
             );
         }
