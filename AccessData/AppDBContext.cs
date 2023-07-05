@@ -150,7 +150,7 @@ namespace AccessData
                       .HasColumnType("varchar")
                       .HasMaxLength(100);
 
-                entity.Property(e => e.BusinessName)
+                entity.Property(e => e.FantasyName)
                       .HasColumnType("varchar")
                       .HasMaxLength(100);
 

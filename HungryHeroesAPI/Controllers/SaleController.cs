@@ -1,6 +1,7 @@
 ﻿using Business.Interfaces;
 using Common.Attributes;
 using Common.Exceptions;
+using Common.Helper;
 using Entities.Enum;
 using Entities.ViewModels.Request;
 using Entities.ViewModels.Response;
@@ -32,7 +33,7 @@ namespace HungryHeroesAPI.Controllers
         public int Create(SaleRequest sale)
         {
             if (Account.Role != Role.Client)
-                throw new BadRequestException("Unauthorized");
+                throw new AppException("No Autorizado");
             return _saleService.Create(sale);
         }
 
@@ -55,13 +56,29 @@ namespace HungryHeroesAPI.Controllers
         /// <param name="idUserClient"></param>
         /// <returns></returns>
         [Authorize(Role.Client)]
-        [HttpGet("All/{idUserClient:int}")]
+        [HttpGet("Buys/{idUserClient:int}")]
         public IEnumerable<SaleResponse> GetAllByUserClientId(int idUserClient)
         {
             if (Account.Role != Role.Client)
-                throw new BadRequestException("Unauthorized");
+                throw new AppException("No autorizado");
             return _saleService.GetSaleByUserClientId(idUserClient);
         }
+
+        /// <summary>
+        /// Method to get all purchases made by
+        /// the UserBusiness
+        /// </summary>
+        /// <param name="idUserClient"></param>
+        /// <returns></returns>
+        [Authorize(Role.Business)]
+        [HttpGet("Sales/{idUserBusiness:int}")]
+        public IEnumerable<SaleResponse> GetSaleByUserBusinessId(int idUserBusiness)
+        {
+            if (Account.Role != Role.Business)
+                throw new AppException("No autorizado");
+            return _saleService.GetSaleByUserBusinessId(idUserBusiness);
+        }
+
 
         /// <summary>
         /// Method to verify the sale code.
@@ -73,7 +90,7 @@ namespace HungryHeroesAPI.Controllers
         public void VerifySale(string code,int idSale)
         {
             if (Account.Role != Role.Business)
-                throw new BadRequestException("Unauthorized");
+                throw new AppException("No autorizado");
             _saleService.VerifySale(code, idSale);
         }
 

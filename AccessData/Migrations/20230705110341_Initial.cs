@@ -116,7 +116,7 @@ namespace AccessData.Migrations
                     BusinessId = table.Column<int>(type: "int", nullable: false),
                     UserClientId = table.Column<int>(type: "int", nullable: false),
                     BoxName = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
-                    BusinessName = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
+                    FantasyName = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
                     UserClientEmail = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false),
                     DateSale = table.Column<DateTime>(type: "date", nullable: false, defaultValueSql: "(getdate())"),
                     Quantity = table.Column<int>(type: "int", nullable: false),

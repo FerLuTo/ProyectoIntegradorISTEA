@@ -42,7 +42,7 @@ namespace HungryHeroesAPI.Controllers
         public IActionResult Register(RegisterRequest model)
         {
             _accountService.Register(model, Request.Headers["origin"]);
-            return Ok(new { message = "Registration successful, please check your email for verification instructions" });
+            return Ok(new { message = "Te registraste correctamente, por favor ingresá a tu mail para seguir las instrucciones" });
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace HungryHeroesAPI.Controllers
         public IActionResult VerifyEmail(VerifyEmailRequest model)
         {
             _accountService.VerifyEmail(model.Token);
-            return Ok(new { message = "Verification successful, you can now login" });
+            return Ok(new { message = "Bienvenido! Ahora podes loguearte" });
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace HungryHeroesAPI.Controllers
         public IActionResult ForgotPassword(ForgotPasswordRequest model)
         {
             _accountService.ForgotPassword(model, Request.Headers["origin"]);
-            return Ok(new { message = "Please check your email for password reset instructions" });
+            return Ok(new { message = "Ingresá a tu email para seguir las instrucciones." });
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace HungryHeroesAPI.Controllers
         public IActionResult ResetPassword(ResetPasswordRequest model)
         {
             _accountService.ResetPassword(model);
-            return Ok(new { message = "Password reset successful, you can now login" });
+            return Ok(new { message = "Contraseña reestablecida, ahora podés loguearte." });
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace HungryHeroesAPI.Controllers
         public IActionResult ChangePassword(ChangePasswordRequest model)
         {
             _accountService.ChangePassword(model);
-            return Ok(new { message = "Password reset successful, you can now login" });
+            return Ok(new { message = "Contraseña modificada, ahora podés loguearte." });
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace HungryHeroesAPI.Controllers
         public IActionResult Delete(int id)
         {
             _accountService.Delete(id);
-            return Ok(new { message = "Account deleted successfully" });
+            return Ok(new { message = "Cuenta eliminada correctamente." });
         }
     
         /*

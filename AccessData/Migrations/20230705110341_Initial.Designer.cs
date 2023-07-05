@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccessData.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20230704180344_Initial")]
+    [Migration("20230705110341_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -128,11 +128,6 @@ namespace AccessData.Migrations
                     b.Property<int>("BusinessId")
                         .HasColumnType("int");
 
-                    b.Property<string>("BusinessName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasMaxLength(6)
@@ -145,6 +140,11 @@ namespace AccessData.Migrations
 
                     b.Property<bool>("Delivered")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FantasyName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");

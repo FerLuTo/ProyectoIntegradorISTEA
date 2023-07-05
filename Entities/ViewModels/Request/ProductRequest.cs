@@ -10,6 +10,7 @@ namespace Entities.ViewModels.Request
 {
     public class ProductRequest
     {
+        [Required]
         public int UserBusinessId { get; set; }
         [Required]
         public string Name { get; set; }

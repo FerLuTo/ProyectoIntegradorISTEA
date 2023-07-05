@@ -44,9 +44,9 @@ namespace Business.Mapper
 
             CreateMap<UserBusinessRequest, UserBusiness>();
 
+            CreateMap<UserBusiness, SaleResponse>();
 
             #endregion
-
 
             #region Product
 
@@ -59,28 +59,25 @@ namespace Business.Mapper
             #endregion
 
             #region Sale
-            CreateMap<Sale, SaleResponse>();
-            /* .ForMember(x => x.ProductId, map => map.MapFrom(src => src.ProductId))
-             .ForMember(x => x.BusinessId, map => map.MapFrom(src => src.BusinessId))
-             .ForMember(x => x.UserClientId, map => map.MapFrom(src => src.UserClientId))
-             .ForMember(x => x.BoxName, map => map.MapFrom(src => src.BoxName))
-             .ForMember(x => x.BusinessName, map => map.MapFrom(src => src.BusinessName))
-             .ForMember(x => x.UserClientEmail, map => map.MapFrom(src => src.UserClientEmail))
-             .ForMember(x => x.DateSale, map => map.MapFrom(src => src.DateSale))
-             .ForMember(x => x.Quantity, map => map.MapFrom(src => src.Quantity))
-             .ForMember(x => x.Total, map => map.MapFrom(src => src.Total))
-             .ForMember(x => x.Code, map => map.MapFrom(src => src.Code))
-             .ForMember(x => x.Delivered, map => map.MapFrom(src => src.Delivered));*/
+            CreateMap<Sale, SaleResponse>()
+                .ForMember(x => x.BoxName, map => map.MapFrom(src => src.BoxName))
+                .ForMember(x => x.FantasyName, map => map.MapFrom(src => src.FantasyName))
+                .ForMember(x => x.UserClientEmail, map => map.MapFrom(src => src.UserClientEmail))
+                .ForMember(x => x.DateSale, map => map.MapFrom(src => src.DateSale))
+                .ForMember(x => x.Quantity, map => map.MapFrom(src => src.Total))
+                .ForMember(x => x.Code, map => map.MapFrom(src => src.Code))
+                .ForMember(x => x.Delivered, map => map.MapFrom(src => src.Delivered));
 
-            CreateMap<SaleRequest, Sale>()
-                //.ForMember(x => x.UserClientId, map => map.MapFrom(src => src.UserClientId))
-                .ForMember(x => x.BusinessId, map => map.MapFrom(src => src.BusinessId));
-                /*.ForMember(x => x.ProductId, map => map.MapFrom(src => src.ProductId))
-                .ForMember(x => x.Quantity, map => map.MapFrom(src => src.Quantity));*/
 
-         
-          
-            
+            CreateMap<SaleRequest, Sale>();
+
+
+            #endregion
+
+            #region UserClient
+
+            CreateMap<UserClient,SaleResponse>();
+
             #endregion
 
         }

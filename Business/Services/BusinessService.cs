@@ -23,8 +23,9 @@ namespace Business.Services
         {
             var business = _context.UserBusinesses
                 .Where(x => x.ActiveProfile && x.IsActive)
+                .OrderBy(x => x.FantasyName)
                 .Select(x => _mapper.Map<UserBusinessResponse>(x));
-                //.OrderBy(x => x.FantasyName);
+                
 
             return business ;
         }
@@ -43,19 +44,7 @@ namespace Business.Services
         {
             var userBusiness = await _context.UserBusinesses.FindAsync(id) ?? throw new KeyNotFoundException("Account doesnt exists");
 
-            if(userBusiness.FantasyName is null || userBusiness.BusinessName is null || userBusiness.Slogan is null 
-               || userBusiness.Description is null || userBusiness.Address is null || userBusiness.Location is null
-               || userBusiness.Cuit is null || userBusiness.Alias is null || userBusiness.Web is null)
-                
-            {
-                throw new AppException("The fields must have data");
-            }
-            /*
-            if(userBusiness.PostalCode <= 0)
-            {
-                throw new AppException($"The field {userBusiness.PostalCode} must have data");
-            }
-            */
+
             userBusiness.ActiveProfile = true; 
             _mapper.Map(model, userBusiness);
             _context.UserBusinesses.Update(userBusiness);

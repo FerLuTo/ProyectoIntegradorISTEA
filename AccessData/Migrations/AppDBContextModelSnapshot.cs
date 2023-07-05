@@ -126,11 +126,6 @@ namespace AccessData.Migrations
                     b.Property<int>("BusinessId")
                         .HasColumnType("int");
 
-                    b.Property<string>("BusinessName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasMaxLength(6)
@@ -143,6 +138,11 @@ namespace AccessData.Migrations
 
                     b.Property<bool>("Delivered")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FantasyName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");

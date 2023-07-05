@@ -31,7 +31,7 @@ namespace HungryHeroesAPI.Controllers
         {
             if (Account.Role != Role.Client)
             {
-                throw new BadRequestException("Unauthorized");
+                throw new BadRequestException("No Autorizado");
             }
               
             return _businessService.GetBusiness();
@@ -59,7 +59,7 @@ namespace HungryHeroesAPI.Controllers
         public async Task<UserBusinessResponse> Edit(int id, UserBusinessRequest model)
         {
             if (Account.Role != Role.Business)
-                throw new BadRequestException("Unauthorized");
+                throw new BadRequestException("No autorizado");
             return await _businessService.Edit(id, model);
         }
     }

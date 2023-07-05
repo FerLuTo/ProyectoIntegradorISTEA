@@ -7,7 +7,7 @@
         public int BusinessId { get; set; }
         public int UserClientId { get; set; }
         public string BoxName { get; set; } = string.Empty;
-        public string BusinessName { get; set; } = string.Empty;
+        public string FantasyName { get; set; } = string.Empty;
         public string UserClientEmail { get; set; } = string.Empty;
         public DateTime DateSale { get; set; }
         public int Quantity { get; set; }
