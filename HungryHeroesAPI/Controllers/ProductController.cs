@@ -1,5 +1,6 @@
 ﻿using Business.Interfaces;
 using Common.Attributes;
+using Common.Helper;
 using Entities.Enum;
 using Entities.ViewModels.Request;
 using Entities.ViewModels.Response;
@@ -46,13 +47,12 @@ namespace HungryHeroesAPI.Controllers
         /// </summary>
         /// <param name="product"></param>
         /// <returns></returns>
-        /// <exception cref="BadHttpRequestException"></exception>
         [Authorize(Role.Business)]
         [HttpPost]
         public async Task<ProductResponse> Create(ProductRequest product)
         {
             if (Account.Role != Role.Business)
-                throw new BadHttpRequestException("No Autorizado");
+                throw new AppException("No Autorizado");
             return await _productService.Create(product);
         }
 
@@ -63,13 +63,12 @@ namespace HungryHeroesAPI.Controllers
         /// <param name="id"></param>
         /// <param name="model"></param>
         /// <returns></returns>
-        /// <exception cref="BadHttpRequestException"></exception>
         [Authorize(Role.Business)]
         [HttpPut("{id:int}")]
         public async Task<ProductResponse> Edit(int id, ProductRequest model)
         {
             if (Account.Role != Role.Business)
-                throw new BadHttpRequestException("No autorizado");
+                throw new AppException("No autorizado");
             return await _productService.Edit(id, model);
         }
 

@@ -2,6 +2,7 @@
 using Business.Services;
 using Common.Attributes;
 using Common.Exceptions;
+using Common.Helper;
 using Entities.Enum;
 using Entities.Models;
 using Entities.ViewModels.Request;
@@ -31,9 +32,9 @@ namespace HungryHeroesAPI.Controllers
         {
             if (Account.Role != Role.Client)
             {
-                throw new BadRequestException("No Autorizado");
+                throw new AppException("No Autorizado");
             }
-              
+
             return _businessService.GetBusiness();
         }
 
@@ -59,8 +60,40 @@ namespace HungryHeroesAPI.Controllers
         public async Task<UserBusinessResponse> Edit(int id, UserBusinessRequest model)
         {
             if (Account.Role != Role.Business)
-                throw new BadRequestException("No autorizado");
+                throw new AppException("No autorizado");
             return await _businessService.Edit(id, model);
         }
+
+
+        #region Filters
+        /// <summary>
+        /// Method to filter businesses by FantasyName
+        /// </summary>
+        /// <param name="fantasyName"></param>
+        /// <returns></returns>
+        [Authorize(Role.Client)]
+        [HttpGet("filterByFantasyName/{fantasyName}")]
+        public IEnumerable<UserBusinessResponse> FilterFantasyName(string fantasyName)
+        {
+            if (Account.Role != Role.Client)
+                throw new AppException("No autorizado");
+            return  _businessService.FilterFantasyName(fantasyName);
+        }
+
+        /// <summary>
+        /// Method to filter businesses by Location
+        /// </summary>
+        /// <param name="location"></param>
+        /// <returns></returns>
+        [Authorize(Role.Client)]
+        [HttpGet("filterByLocation/{location}")]
+        public IEnumerable<UserBusinessResponse> FilterLocation(string location)
+        {
+            if (Account.Role != Role.Client)
+                throw new AppException("No autorizado");
+            return  _businessService.FilterLocation(location);
+        }
+
+        #endregion
     }
 }

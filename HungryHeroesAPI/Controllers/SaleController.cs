@@ -68,10 +68,10 @@ namespace HungryHeroesAPI.Controllers
         /// Method to get all purchases made by
         /// the UserBusiness
         /// </summary>
-        /// <param name="idUserClient"></param>
+        /// <param name="idUserBusiness"></param>
         /// <returns></returns>
         [Authorize(Role.Business)]
-        [HttpGet("Sales/{idUserBusiness:int}")]
+        [HttpGet("{idUserBusiness:int}")]
         public IEnumerable<SaleResponse> GetSaleByUserBusinessId(int idUserBusiness)
         {
             if (Account.Role != Role.Business)
@@ -85,6 +85,7 @@ namespace HungryHeroesAPI.Controllers
         /// When client withdraws box.
         /// </summary>
         /// <param name="code"></param>
+        /// <param name="idSale"></param>
         [Authorize(Role.Business)]
         [HttpPut("Verify-Sale")]
         public void VerifySale(string code,int idSale)
@@ -99,10 +100,12 @@ namespace HungryHeroesAPI.Controllers
         /// when client starts the purchase
         /// </summary>
         /// <param name="idProduct"></param>
-        [AllowAnonymous]
+        [Authorize(Role.Client)]
         [HttpPut("Modify-Stock")]
         public void ModifyStock(int idProduct, int quantity)
         {
+            if (Account.Role != Role.Client)
+                throw new AppException("No autorizado");
             _saleService.ModifyStock(idProduct, quantity);
         }
 

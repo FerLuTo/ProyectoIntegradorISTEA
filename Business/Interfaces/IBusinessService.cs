@@ -8,5 +8,7 @@ namespace Business.Interfaces
         IEnumerable<UserBusinessResponse> GetBusiness();
         Task<UserBusinessResponse> Edit(int id, UserBusinessRequest product);
         UserBusinessResponse GetBusinessById(int id);
+        IEnumerable<UserBusinessResponse> FilterFantasyName(string fantasyName);
+        IEnumerable<UserBusinessResponse> FilterLocation(string location);
     }
 }

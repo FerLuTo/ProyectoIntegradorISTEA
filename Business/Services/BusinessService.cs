@@ -6,6 +6,7 @@ using Common.Helper;
 using Entities.Models;
 using Entities.ViewModels.Request;
 using Entities.ViewModels.Response;
+using Microsoft.EntityFrameworkCore;
 
 namespace Business.Services
 {
@@ -53,5 +54,31 @@ namespace Business.Services
             return _mapper.Map<UserBusinessResponse>(userBusiness);
         }
 
+        public IEnumerable<UserBusinessResponse> FilterFantasyName(string fantasyName)
+        {
+            var filterFantasyName = _context.UserBusinesses
+                .Where(b => b.FantasyName.Contains(fantasyName))
+                .OrderBy(b => b.FantasyName)
+                .Select(b => _mapper.Map<UserBusinessResponse>(b));
+
+            return filterFantasyName;
+            
+
+            /*var filterFantasyName = await _context.UserBusinesses.FirstOrDefaultAsync(b => b.FantasyName.StartsWith(fantasyName));
+            if (fantasyName is null)
+                throw new KeyNotFoundException("No encontramos el negocio que buscás");
+            
+            return (IEnumerable<UserBusinessResponse>)_mapper.Map<UserBusinessResponse>(filterFantasyName);*/
+        }
+
+        public IEnumerable<UserBusinessResponse> FilterLocation(string location)
+        {
+            var filterLocation = _context.UserBusinesses
+                .Where(b => b.Location.Contains(location))
+                .OrderBy(b => b.Location)
+                .Select(b => _mapper.Map<UserBusinessResponse>(b));
+
+            return filterLocation;
+        }
     }
 }
