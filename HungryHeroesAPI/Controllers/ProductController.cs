@@ -49,7 +49,7 @@ namespace HungryHeroesAPI.Controllers
         /// <returns></returns>
         [Authorize(Role.Business)]
         [HttpPost]
-        public async Task<ProductResponse> Create(ProductRequest product)
+        public async Task<ProductResponse> Create([FromForm]ProductRequest product)
         {
             if (Account.Role != Role.Business)
                 throw new AppException("No Autorizado");
@@ -65,7 +65,7 @@ namespace HungryHeroesAPI.Controllers
         /// <returns></returns>
         [Authorize(Role.Business)]
         [HttpPut("{id:int}")]
-        public async Task<ProductResponse> Edit(int id, ProductRequest model)
+        public async Task<ProductResponse> Edit(int id, [FromForm]ProductRequest model)
         {
             if (Account.Role != Role.Business)
                 throw new AppException("No autorizado");

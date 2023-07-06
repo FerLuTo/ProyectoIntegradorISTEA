@@ -62,18 +62,19 @@ namespace Business.Services
             }
 
             var product = _mapper.Map<Product>(model);
-/*
+
             if (model.Image != null)
             {
                 product.ImagePath = await _azureBlobStorageService.UploadAsync(model.Image, ContainerEnum.IMAGES);
             }
-            */
+
 
             product.IsActive = true;    
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
-
-            return _mapper.Map<ProductResponse>(product);
+            var productResponse = _mapper.Map<ProductResponse>(product);
+            productResponse.ImageUrl = "https://hungryheroesstorage.blob.core.windows.net/images/" + product.ImagePath;
+            return productResponse;
         }
 
         public async Task<ProductResponse> Edit(int id, ProductRequest model)
@@ -83,16 +84,18 @@ namespace Business.Services
                 throw new KeyNotFoundException("Product doesnt exists");
 
             _mapper.Map(model, product);
-/*
+
             if (model.Image != null)
             {
                 product.ImagePath = await _azureBlobStorageService.UploadAsync(model.Image, ContainerEnum.IMAGES);
             }
-*/
+
             _context.Products.Update(product);
             await _context.SaveChangesAsync();
+            var productResponse = _mapper.Map<ProductResponse>(product);
+            productResponse.ImageUrl = "https://hungryheroesstorage.blob.core.windows.net/images/" + product.ImagePath;
 
-            return _mapper.Map<ProductResponse>(product);
+            return productResponse;
         }
 
         public  void Delete(int id)
@@ -100,16 +103,6 @@ namespace Business.Services
             var product = _context.Products.Find(id);
             if (product is null || product.IsActive is false)
                 throw new KeyNotFoundException("Product doesnt exists");
-            /*
-            if (product != null)
-            {
-                if (!string.IsNullOrEmpty(product.ImagePath))
-                {
-                    await _azureBlobStorageService.DeleteAsync(ContainerEnum.IMAGES, product.ImagePath);
-                }
-
-            }
-            */
             product.IsActive = false;
             _context.Products.Update(product);
             _context.SaveChanges();

@@ -21,6 +21,6 @@ namespace Entities.ViewModels.Response
         public string Web { get; set; }
         public bool ActiveProfile { get; set; }
 
-
+        public string imageUrl { get; set; }
     }
 }

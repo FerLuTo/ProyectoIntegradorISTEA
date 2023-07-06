@@ -129,12 +129,10 @@ namespace AccessData
                       .HasColumnType("decimal(10,2)")
                       .IsRequired();
 
-                /*
                 entity.Property(e => e.ImagePath)
-                    .IsRequired(false)
-                    .HasColumnType("varchar")
-                    .HasMaxLength(100);
-                */
+                .HasColumnType("nvarchar")
+                .HasMaxLength(100);
+
 
                 entity.HasOne(e => e.UserBusiness)
                     .WithMany(e => e.Products)
