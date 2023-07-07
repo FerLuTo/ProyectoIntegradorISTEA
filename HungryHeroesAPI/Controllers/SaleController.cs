@@ -43,7 +43,7 @@ namespace HungryHeroesAPI.Controllers
         /// <param name="idSale"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpGet("{idSale:int}")]
+        [HttpGet("GetDetails/{idSale:int}")]
         public SaleResponse SaleDetail(int idSale)
         {
             return _saleService.SaleDetail(idSale);
@@ -71,7 +71,7 @@ namespace HungryHeroesAPI.Controllers
         /// <param name="idUserBusiness"></param>
         /// <returns></returns>
         [Authorize(Role.Business)]
-        [HttpGet("{idUserBusiness:int}")]
+        [HttpGet("GetSales/{idUserBusiness:int}")]
         public IEnumerable<SaleResponse> GetSaleByUserBusinessId(int idUserBusiness)
         {
             if (Account.Role != Role.Business)

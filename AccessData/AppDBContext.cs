@@ -141,7 +141,7 @@ namespace AccessData
                     .HasForeignKey(e => e.UserBusinessId);
 
             });
-
+        
             modelBuilder.Entity<Sale>(entity =>
             {
                 entity.HasKey(x => x.Id);

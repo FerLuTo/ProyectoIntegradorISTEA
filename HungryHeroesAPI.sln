@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HungryHeroesAPI", "HungryHeroesAPI\HungryHeroesAPI.csproj", "{D98D033C-43F4-43E9-9177-70F2C63D240E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HungryHeroesAPI", "HungryHeroesAPI\HungryHeroesAPI.csproj", "{D98D033C-43F4-43E9-9177-70F2C63D240E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1-API", "1-API", "{10CDF9A5-451B-4275-BD8A-60A213BBEDC0}"
 EndProject
@@ -13,13 +13,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3-DATA", "3-DATA", "{CB9E5C
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4-UTILS", "4-UTILS", "{2335EAC4-5E7A-4E00-A914-64589EEE0FB8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Business", "Business\Business.csproj", "{1DCF0F4A-0174-4E71-AEF7-282C2BFABD98}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Business", "Business\Business.csproj", "{1DCF0F4A-0174-4E71-AEF7-282C2BFABD98}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities", "Entities\Entities.csproj", "{20098704-B3A5-4DA6-8546-B95D3D4982B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entities", "Entities\Entities.csproj", "{20098704-B3A5-4DA6-8546-B95D3D4982B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccessData", "AccessData\AccessData.csproj", "{8CEAB5B7-ACAA-43A4-BC3C-DFC4A509DFDC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccessData", "AccessData\AccessData.csproj", "{8CEAB5B7-ACAA-43A4-BC3C-DFC4A509DFDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{2BCCFC18-39AA-4B2F-B2F7-94E30B694DA9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{2BCCFC18-39AA-4B2F-B2F7-94E30B694DA9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

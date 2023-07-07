@@ -31,4 +31,8 @@
     <ProjectReference Include="..\Entities\Entities.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Mailing\" />
+  </ItemGroup>
+
 </Project>
