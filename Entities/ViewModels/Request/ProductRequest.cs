@@ -13,14 +13,13 @@ namespace Entities.ViewModels.Request
         [Required]
         public int UserBusinessId { get; set; }
         [Required]
-        public string Name { get; set; }
+        public string? Name { get; set; } 
         [Required]
-        public string Description { get; set; }
+        public string? Description { get; set; } 
         [Required]
         public int Stock { get; set; }
         [Required]
         public int Price { get; set; }
-
-        public IFormFile Image { get; set; }
+        public IFormFile? Image { get; set; }
     }
 }

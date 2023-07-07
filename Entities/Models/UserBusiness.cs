@@ -20,6 +20,6 @@ namespace Entities.Models
 
         public virtual Account Account { get; set; }
 
-        public ICollection<Product>? Products { get; set; }
+        public ICollection<Product> Products { get; set; }
     }
 }

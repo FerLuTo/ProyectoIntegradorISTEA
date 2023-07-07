@@ -80,7 +80,7 @@ namespace Business.Services
             }*/
             if (_context.Accounts.Any(x => x.Email == model.Email))
             {
-                throw new AppException("Account already registered");
+                throw new AppException("Ya te estás registrado");
             }
             
                 var account = _mapper.Map<Account>(model);

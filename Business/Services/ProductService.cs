@@ -33,6 +33,7 @@ namespace Business.Services
             .ToList();
 
             return _mapper.Map<IList<ProductResponse>>(products);
+        
 
         }
 
@@ -44,7 +45,7 @@ namespace Business.Services
                 .FirstOrDefault();
 
             if (product is null)
-                throw new KeyNotFoundException("Product doesnt exists");
+                throw new KeyNotFoundException("El producto no existe");
 
             return product;
         }
@@ -54,11 +55,11 @@ namespace Business.Services
             var business = await _context.UserBusinesses.FindAsync(model.UserBusinessId); 
 
             if(business is null || business.IsActive == false)
-                throw new KeyNotFoundException("User doesnt exists");
+                throw new KeyNotFoundException("El usuario no existe");
 
             if(model.Stock <= 0 || model.Price <= 0)
             {
-                throw new AppException("The fields must have data");
+                throw new AppException("Los campos stock y precio deben estar completos");
             }
 
             var product = _mapper.Map<Product>(model);
@@ -80,7 +81,7 @@ namespace Business.Services
         public async Task<ProductResponse> Edit(int id, ProductRequest model)
         {
             var product = await _context.Products.FindAsync(id);
-            if(product is null || product.IsActive is false)
+            if (product is null || product.IsActive is false)
                 throw new KeyNotFoundException("Product doesnt exists");
 
             _mapper.Map(model, product);
@@ -102,7 +103,7 @@ namespace Business.Services
         {
             var product = _context.Products.Find(id);
             if (product is null || product.IsActive is false)
-                throw new KeyNotFoundException("Product doesnt exists");
+                throw new KeyNotFoundException("El producto no existe");
             product.IsActive = false;
             _context.Products.Update(product);
             _context.SaveChanges();

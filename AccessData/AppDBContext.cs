@@ -131,7 +131,8 @@ namespace AccessData
 
                 entity.Property(e => e.ImagePath)
                 .HasColumnType("nvarchar")
-                .HasMaxLength(100);
+                .HasMaxLength(100)
+                .IsRequired(false);
 
 
                 entity.HasOne(e => e.UserBusiness)

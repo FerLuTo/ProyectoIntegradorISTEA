@@ -93,7 +93,8 @@ namespace AccessData.Migrations
                     Stock = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    UserBusinessId = table.Column<int>(type: "int", nullable: false)
+                    UserBusinessId = table.Column<int>(type: "int", nullable: false),
+                    ImagePath = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true)
                 },
                 constraints: table =>
                 {

@@ -51,10 +51,12 @@ namespace Business.Mapper
             #region Product
 
             CreateMap<Product, ProductResponse>()
-                .ForMember(x => x.ProductId, map => map.MapFrom(src => src.Id));
+                .ForMember(x => x.ProductId, map => map.MapFrom(src => src.Id))
+                .ForMember(x => x.ImageUrl, map => map.MapFrom(src => src.ImagePath));
 
 
-            CreateMap<ProductRequest, Product>();
+            CreateMap<ProductRequest, Product>()
+                .ForMember(x => x.UserBusinessId, map => map.MapFrom(src => src.UserBusinessId));
 
             #endregion
 

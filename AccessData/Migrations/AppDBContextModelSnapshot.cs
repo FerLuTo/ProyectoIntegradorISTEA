@@ -87,7 +87,6 @@ namespace AccessData.Migrations
                         .HasColumnType("varchar(100)");
 
                     b.Property<string>("ImagePath")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 

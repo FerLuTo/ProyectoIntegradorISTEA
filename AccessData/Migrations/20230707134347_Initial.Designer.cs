@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccessData.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20230705110341_Initial")]
+    [Migration("20230707134347_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -87,6 +87,10 @@ namespace AccessData.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
+
+                    b.Property<string>("ImagePath")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");

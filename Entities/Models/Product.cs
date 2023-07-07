@@ -9,9 +9,7 @@
         public decimal Price { get; set; }
         public bool IsActive { get; set; }
         public int UserBusinessId { get; set; }
-
         public virtual UserBusiness UserBusiness { get; set; }
-
 
         public string ImagePath { get; set; }
 
