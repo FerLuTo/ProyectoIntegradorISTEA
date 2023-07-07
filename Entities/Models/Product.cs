@@ -13,7 +13,7 @@
         public virtual UserBusiness UserBusiness { get; set; }
 
 
-        //public string ImagePath { get; set; }
+        public string ImagePath { get; set; }
 
     }
 }
