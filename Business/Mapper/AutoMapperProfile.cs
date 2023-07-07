@@ -59,15 +59,7 @@ namespace Business.Mapper
             #endregion
 
             #region Sale
-            CreateMap<Sale, SaleResponse>()
-                .ForMember(x => x.BoxName, map => map.MapFrom(src => src.BoxName))
-                .ForMember(x => x.FantasyName, map => map.MapFrom(src => src.FantasyName))
-                .ForMember(x => x.UserClientEmail, map => map.MapFrom(src => src.UserClientEmail))
-                .ForMember(x => x.DateSale, map => map.MapFrom(src => src.DateSale))
-                .ForMember(x => x.Quantity, map => map.MapFrom(src => src.Total))
-                .ForMember(x => x.Code, map => map.MapFrom(src => src.Code))
-                .ForMember(x => x.Delivered, map => map.MapFrom(src => src.Delivered));
-
+            CreateMap<Sale, SaleResponse>();
 
             CreateMap<SaleRequest, Sale>();
 

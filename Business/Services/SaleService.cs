@@ -50,32 +50,33 @@ namespace Business.Services
 
         public SaleResponse SaleDetail(int idSale)
         {
-            var sale = _context.Sales.Find(idSale);
+            var sale = _context.Sales.Find(idSale) ?? throw new AppException("Compra inexistente");
             var userBusiness = _context.UserBusinesses.Where(x => x.Id == sale.BusinessId).Select(x => x.FantasyName);
             var product = _context.Products.Where(x => x.Id == sale.ProductId).Select(x => x.Name);
             var userClient = _context.UserClients.Where(x => x.Id == sale.UserClientId).Select(x => x.Account.Email);
 
-            sale.FantasyName = userBusiness.FirstOrDefault();
-            sale.BoxName = product.FirstOrDefault();
-            sale.UserClientEmail = userClient.FirstOrDefault();
+            sale.FantasyName = userBusiness.First();
+            sale.BoxName = product.First();
+            sale.UserClientEmail = userClient.First();
             sale.Code = GenerateSaleCode();
             
             _context.Update(sale);
             _context.SaveChanges();
 
             var response = _mapper.Map<SaleResponse>(sale);
-            response.Total = sale.Total;
-            response.DateSale = sale.DateSale;
+
             
             return response;
         }
-        
+
 
         public IEnumerable<SaleResponse> GetSaleByUserClientId(int idUserClient)
         {
+            
             var sale = _context.Sales.Where(x => x.UserClientId == idUserClient).ToList();
             return sale is null ? throw new AppException("Compra inexistente") 
                 : _mapper.Map<IList<SaleResponse>>(sale);
+           
         }
 
         public IEnumerable<SaleResponse> GetSaleByUserBusinessId(int idUserBusiness)
@@ -121,7 +122,7 @@ namespace Business.Services
 
         public void VerifySale(string code, int idSale)
         {
-            var sale = _context.Sales.SingleOrDefault(x => x.Code == code && x.Id == idSale) ?? throw new BadRequestException("La verificación falló");
+            var sale = _context.Sales.First(x => x.Code == code && x.Id == idSale) ?? throw new AppException("La verificación falló");
             sale.Delivered = true;
 
             _context.Sales.Update(sale);
@@ -130,12 +131,12 @@ namespace Business.Services
 
         public void ModifyStock(int idProduct, int quantity)
         {
-            var product = _context.Products.SingleOrDefault(x => x.Id == idProduct) ?? throw new BadRequestException("No se encuentra el producto");
-            var checkStock = _context.Products.Any(x => x.Stock >= quantity) ? throw new BadRequestException("Producto sin stock disponible") 
-                            : product.Stock -= quantity;
+            var product = _context.Products.First(x => x.Id == idProduct) ?? throw new AppException("No se encuentra el producto");
+            if(product.Stock <= 0)
+                throw new AppException("Producto sin stock");
 
-            product.Stock = checkStock;
-
+            product.Stock -= quantity;
+            
             _context.Products.Update(product);
             _context.SaveChanges();
         }
