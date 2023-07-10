@@ -102,11 +102,11 @@ namespace HungryHeroesAPI.Controllers
         /// <param name="idProduct"></param>
         [Authorize(Role.Client)]
         [HttpPut("Modify-Stock")]
-        public void ModifyStock(int idProduct, int quantity)
+        public string ModifyStock(int idProduct, int quantity)
         {
             if (Account.Role != Role.Client)
                 throw new AppException("Unauthorized");
-            _saleService.ModifyStock(idProduct, quantity);
+            return _saleService.ModifyStock(idProduct, quantity);
         }
 
     }
