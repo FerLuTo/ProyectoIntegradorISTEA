@@ -17,6 +17,7 @@ namespace Entities.Models
         public string Web { get; set; } = string.Empty;
         public bool IsActive { get; set; }
         public bool ActiveProfile { get; set; }
+        public string ImagePath { get; set; } = string.Empty;
 
         public virtual Account Account { get; set; }
 

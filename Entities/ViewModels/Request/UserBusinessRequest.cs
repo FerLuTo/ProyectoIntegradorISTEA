@@ -1,4 +1,5 @@
 ﻿using Entities.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -29,5 +30,6 @@ namespace Entities.ViewModels.Request
         public string Alias { get; set; } 
         [Required]
         public string Web { get; set; }
+        public IFormFile? Image { get; set; }
     }
 }
