@@ -356,7 +356,7 @@ namespace Business.Services
                              </div>
                              <div style=""padding: 5rem;display: flex;flex-direction: column;align-items: center;text-align: center;color: #2C3535;"">
                              <p style=""margin-top: 2rem;font-weight: 900;letter-spacing: -1px;"">Tu usuario fue dado de baja.</p>
-                             <p style=""margin-top: 2rem;font-weight: 900;letter-spacing: -1px;"">Lamentamos que ya no seas parte de Hungry     Heroes. </p>
+                             <p style=""margin-top: 2rem;font-weight: 900;letter-spacing: -1px;"">Lamentamos que ya no seas parte de Hungry Heroes. </p>
                              </div>
                              <div style=""width: 100%;margin: 5rem 0 1rem 0;border-bottom: solid 1px #2C3535;""></div>
                              <div style=""font-size: 0.7rem;text-align: left;"">
