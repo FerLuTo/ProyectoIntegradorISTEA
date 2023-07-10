@@ -32,7 +32,7 @@ namespace HungryHeroesAPI.Controllers
         {
             if (Account.Role != Role.Client)
             {
-                throw new AppException("No Autorizado");
+                throw new AppException("Unauthorized");
             }
 
             return _businessService.GetBusiness();
@@ -60,7 +60,7 @@ namespace HungryHeroesAPI.Controllers
         public async Task<UserBusinessResponse> Edit(int id, UserBusinessRequest model)
         {
             if (Account.Role != Role.Business)
-                throw new AppException("No autorizado");
+                throw new AppException("Unauthorized");
             return await _businessService.Edit(id, model);
         }
 
@@ -76,7 +76,7 @@ namespace HungryHeroesAPI.Controllers
         public IEnumerable<UserBusinessResponse> FilterFantasyName(string fantasyName)
         {
             if (Account.Role != Role.Client)
-                throw new AppException("No autorizado");
+                throw new AppException("Unauthorized");
             return  _businessService.FilterFantasyName(fantasyName);
         }
 
@@ -90,7 +90,7 @@ namespace HungryHeroesAPI.Controllers
         public IEnumerable<UserBusinessResponse> FilterLocation(string location)
         {
             if (Account.Role != Role.Client)
-                throw new AppException("No autorizado");
+                throw new AppException("Unauthorized");
             return  _businessService.FilterLocation(location);
         }
 

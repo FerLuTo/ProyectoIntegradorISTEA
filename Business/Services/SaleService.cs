@@ -6,6 +6,7 @@ using Common.Helper;
 using Entities.Models;
 using Entities.ViewModels.Request;
 using Entities.ViewModels.Response;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 
@@ -28,10 +29,6 @@ namespace Business.Services
             var userBusiness = _context.UserBusinesses.Find(model.BusinessId);
             var userClient = _context.UserClients.Find(model.UserClientId);
 
-
-                if (product.Stock <= 0)
-                    throw new AppException("Producto sin stock");
-
                 var sale = _mapper.Map<Sale>(model);
                 sale.ProductId = product.Id;
                 sale.BusinessId = userBusiness.Id;
@@ -50,7 +47,7 @@ namespace Business.Services
 
         public SaleResponse SaleDetail(int idSale)
         {
-            var sale = _context.Sales.Find(idSale) ?? throw new AppException("Compra inexistente");
+            var sale = _context.Sales.Find(idSale);
             var userBusiness = _context.UserBusinesses.Where(x => x.Id == sale.BusinessId).Select(x => x.FantasyName);
             var product = _context.Products.Where(x => x.Id == sale.ProductId).Select(x => x.Name);
             var userClient = _context.UserClients.Where(x => x.Id == sale.UserClientId).Select(x => x.Account.Email);
@@ -64,7 +61,6 @@ namespace Business.Services
             _context.SaveChanges();
 
             var response = _mapper.Map<SaleResponse>(sale);
-
             
             return response;
         }
@@ -74,16 +70,15 @@ namespace Business.Services
         {
             
             var sale = _context.Sales.Where(x => x.UserClientId == idUserClient).ToList();
-            return sale is null ? throw new AppException("Compra inexistente") 
-                : _mapper.Map<IList<SaleResponse>>(sale);
+
+            return _mapper.Map<IList<SaleResponse>>(sale);
            
         }
 
         public IEnumerable<SaleResponse> GetSaleByUserBusinessId(int idUserBusiness)
         {
             var sale = _context.Sales.Where(x => x.BusinessId == idUserBusiness).ToList();
-            return sale is null ? throw new AppException("Venta inexistente") 
-                : _mapper.Map<IList<SaleResponse>>(sale);
+            return _mapper.Map<IList<SaleResponse>>(sale);
         }
 
 
@@ -120,25 +115,29 @@ namespace Business.Services
 
 
 
-        public void VerifySale(string code, int idSale)
+        public string VerifySale(string code, int idSale)
         {
-            var sale = _context.Sales.First(x => x.Code == code && x.Id == idSale) ?? throw new AppException("La verificación falló");
+            var message = "Ok";
+            var sale = _context.Sales.First(x => x.Code == code && x.Id == idSale) ?? throw new AppException("El código ingresado es incorrecto");
             sale.Delivered = true;
 
             _context.Sales.Update(sale);
             _context.SaveChanges();
+
+            return message;
         }
 
-        public void ModifyStock(int idProduct, int quantity)
+        public string ModifyStock(int idProduct, int quantity)
         {
-            var product = _context.Products.First(x => x.Id == idProduct) ?? throw new AppException("No se encuentra el producto");
-            if(product.Stock <= 0)
-                throw new AppException("Producto sin stock");
+            var message = "Ok";
+            var product = _context.Products.First(x => x.Id == idProduct);
 
             product.Stock -= quantity;
             
             _context.Products.Update(product);
             _context.SaveChanges();
+
+            return message;
         }
 
         #endregion

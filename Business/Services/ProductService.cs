@@ -29,11 +29,11 @@ namespace Business.Services
         {
 
             var products = _context.Products
-            .Where(x => x.UserBusiness.Id == idUserBusiness && x.IsActive !=false)
+            .Where(x => x.UserBusiness.Id == idUserBusiness && x.IsActive !=false && x.Stock > 0)
             .ToList();
 
             return _mapper.Map<IList<ProductResponse>>(products);
-        
+
 
         }
 
@@ -43,9 +43,6 @@ namespace Business.Services
                 .Where(x => x.Id == id && x.IsActive != false)
                 .Select(x => _mapper.Map<ProductResponse>(x))
                 .FirstOrDefault();
-
-            if (product is null)
-                throw new KeyNotFoundException("El producto no existe");
 
             return product;
         }
@@ -59,7 +56,7 @@ namespace Business.Services
 
             if(model.Stock <= 0 || model.Price <= 0)
             {
-                throw new AppException("Los campos stock y precio deben estar completos");
+                throw new AppException("Los campos stock y precio son obligatorios");
             }
 
             var product = _mapper.Map<Product>(model);
@@ -81,8 +78,6 @@ namespace Business.Services
         public async Task<ProductResponse> Edit(int id, ProductRequest model)
         {
             var product = await _context.Products.FindAsync(id);
-            if (product is null || product.IsActive is false)
-                throw new KeyNotFoundException("Product doesnt exists");
 
             _mapper.Map(model, product);
 
@@ -102,8 +97,7 @@ namespace Business.Services
         public  void Delete(int id)
         {
             var product = _context.Products.Find(id);
-            if (product is null || product.IsActive is false)
-                throw new KeyNotFoundException("El producto no existe");
+
             product.IsActive = false;
             _context.Products.Update(product);
             _context.SaveChanges();

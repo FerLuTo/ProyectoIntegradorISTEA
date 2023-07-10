@@ -33,7 +33,7 @@ namespace HungryHeroesAPI.Controllers
         public int Create(SaleRequest sale)
         {
             if (Account.Role != Role.Client)
-                throw new AppException("No Autorizado");
+                throw new AppException("Unauthorized");
             return _saleService.Create(sale);
         }
 
@@ -60,7 +60,7 @@ namespace HungryHeroesAPI.Controllers
         public IEnumerable<SaleResponse> GetAllByUserClientId(int idUserClient)
         {
             if (Account.Role != Role.Client)
-                throw new AppException("No autorizado");
+                throw new AppException("Unauthorized");
             return _saleService.GetSaleByUserClientId(idUserClient);
         }
 
@@ -75,7 +75,7 @@ namespace HungryHeroesAPI.Controllers
         public IEnumerable<SaleResponse> GetSaleByUserBusinessId(int idUserBusiness)
         {
             if (Account.Role != Role.Business)
-                throw new AppException("No autorizado");
+                throw new AppException("Unauthorized");
             return _saleService.GetSaleByUserBusinessId(idUserBusiness);
         }
 
@@ -88,11 +88,11 @@ namespace HungryHeroesAPI.Controllers
         /// <param name="idSale"></param>
         [Authorize(Role.Business)]
         [HttpPut("Verify-Sale")]
-        public void VerifySale(string code,int idSale)
+        public string VerifySale(string code,int idSale)
         {
             if (Account.Role != Role.Business)
-                throw new AppException("No autorizado");
-            _saleService.VerifySale(code, idSale);
+                throw new AppException("Unauthorized");
+           return  _saleService.VerifySale(code, idSale);
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace HungryHeroesAPI.Controllers
         public void ModifyStock(int idProduct, int quantity)
         {
             if (Account.Role != Role.Client)
-                throw new AppException("No autorizado");
+                throw new AppException("Unauthorized");
             _saleService.ModifyStock(idProduct, quantity);
         }
 

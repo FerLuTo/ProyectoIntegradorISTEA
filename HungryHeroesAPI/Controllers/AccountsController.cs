@@ -42,7 +42,7 @@ namespace HungryHeroesAPI.Controllers
         public IActionResult Register(RegisterRequest model)
         {
             _accountService.Register(model, Request.Headers["origin"]);
-            return Ok(new { message = "Te registraste correctamente, por favor ingresá a tu mail para seguir las instrucciones" });
+            return Ok();
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace HungryHeroesAPI.Controllers
         public IActionResult VerifyEmail(VerifyEmailRequest model)
         {
             _accountService.VerifyEmail(model.Token);
-            return Ok(new { message = "Bienvenido! Ahora podes loguearte" });
+            return Ok();
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace HungryHeroesAPI.Controllers
         public IActionResult ResetPassword(ResetPasswordRequest model)
         {
             _accountService.ResetPassword(model);
-            return Ok(new { message = "Contraseña reestablecida, ahora podés loguearte." });
+            return Ok();
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace HungryHeroesAPI.Controllers
         public IActionResult ChangePassword(ChangePasswordRequest model)
         {
             _accountService.ChangePassword(model);
-            return Ok(new { message = "Contraseña modificada, ahora podés loguearte." });
+            return Ok();
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace HungryHeroesAPI.Controllers
         public IActionResult Delete(int id)
         {
             _accountService.Delete(id);
-            return Ok(new { message = "Cuenta eliminada correctamente." });
+            return Ok();
         }
     
         /*

@@ -61,7 +61,8 @@ namespace Business.Mapper
             #endregion
 
             #region Sale
-            CreateMap<Sale, SaleResponse>();
+            CreateMap<Sale, SaleResponse>()
+                .ForMember(x => x.SaleId, map => map.MapFrom(src => src.Id));
 
             CreateMap<SaleRequest, Sale>();
 

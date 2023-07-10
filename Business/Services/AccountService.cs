@@ -49,13 +49,13 @@ namespace Business.Services
             var account = _context.Accounts.SingleOrDefault(x => x.Email == model.Email);
 
             if (account == null || !BCrypt.Net.BCrypt.Verify(model.Password, account.PasswordHash))
-                throw new AppException("Email or password is incorrect");
+                throw new AppException("El usuario o la contraseña son incorrectos.");
 
             if (!account.IsVerified)
-                throw new AppException("Account not verified, please check your email and follow instructions");
+                throw new AppException("Tu cuenta no está verificada. Por favor, ingresá a tu mail para verificarla.");
 
             if (!account.IsActive)
-                throw new KeyNotFoundException("Account doesn't exist");
+                throw new KeyNotFoundException("La cuenta no está registrada.");
 
             var jwtToken = _jwtUtils.GenerateJwtToken(account);
             var userBusinessId = _context.UserBusinesses.FirstOrDefault(x => x.AccountId == account.Id);
@@ -80,7 +80,7 @@ namespace Business.Services
             }*/
             if (_context.Accounts.Any(x => x.Email == model.Email))
             {
-                throw new AppException("Ya te estás registrado");
+                throw new AppException("Este email ya está registrado.");
             }
             
                 var account = _mapper.Map<Account>(model);
@@ -119,7 +119,8 @@ namespace Business.Services
         {
             var account = _context.Accounts.SingleOrDefault(x => x.Email == model.Email);
 
-            if (account is null) return;
+            if (account is null || account.Email != model.Email)
+                throw new AppException("El email no existe.");
 
             //Create a reset token that expires after 1 day
             account.ResetToken = GenerateResetToken();
@@ -154,7 +155,7 @@ namespace Business.Services
             var account = _context.Accounts.SingleOrDefault(x => x.Id == model.Id);
 
             if (!BCrypt.Net.BCrypt.Verify(model.OldPassword, account.PasswordHash))
-                throw new AppException("Old password is incorrect");
+                throw new AppException("La contraseña actual es incorrecta.");
 
             account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
 

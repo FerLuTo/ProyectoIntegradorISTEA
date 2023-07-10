@@ -63,6 +63,7 @@ namespace Business.Services
 
             return filterFantasyName;
             
+            //TODO: si no encuentra coincidencia mensaje: "Sin coincidencias."
 
             /*var filterFantasyName = await _context.UserBusinesses.FirstOrDefaultAsync(b => b.FantasyName.StartsWith(fantasyName));
             if (fantasyName is null)
@@ -79,6 +80,8 @@ namespace Business.Services
                 .Select(b => _mapper.Map<UserBusinessResponse>(b));
 
             return filterLocation;
+
+            //TODO: si no encuentra coincidencia mensaje: "Sin coincidencias."
         }
     }
 }

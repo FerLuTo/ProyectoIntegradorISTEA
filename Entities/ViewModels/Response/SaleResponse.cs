@@ -4,6 +4,7 @@ namespace Entities.ViewModels.Response
 {
     public class SaleResponse
     {
+        public int SaleId { get; set; }
         public string BoxName { get; set; }
         public string FantasyName { get; set; }
         public string UserClientEmail { get; set; }

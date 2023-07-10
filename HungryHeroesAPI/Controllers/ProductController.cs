@@ -52,7 +52,7 @@ namespace HungryHeroesAPI.Controllers
         public async Task<ProductResponse> Create([FromForm]ProductRequest product)
         {
             if (Account.Role != Role.Business)
-                throw new AppException("No Autorizado");
+                throw new AppException("Unauthorized");
             return await _productService.Create(product);
         }
 
@@ -68,7 +68,7 @@ namespace HungryHeroesAPI.Controllers
         public async Task<ProductResponse> Edit(int id, [FromForm]ProductRequest model)
         {
             if (Account.Role != Role.Business)
-                throw new AppException("No autorizado");
+                throw new AppException("Unauthorized");
             return await _productService.Edit(id, model);
         }
 
@@ -83,7 +83,7 @@ namespace HungryHeroesAPI.Controllers
         public IActionResult Delete(int id)
         {
             if (Account.Role != Role.Business)
-                return Unauthorized(new { message = "No autorizado" });
+                return Unauthorized(new { message = "Unauthorized" });
 
             _productService.Delete(id);
             return Ok(new { message = "Producto eliminado." });
