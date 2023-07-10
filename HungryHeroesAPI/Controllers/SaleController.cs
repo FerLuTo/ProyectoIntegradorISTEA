@@ -27,7 +27,7 @@ namespace HungryHeroesAPI.Controllers
         /// </summary>
         /// <param name="sale"></param>
         /// <returns></returns>
-        /// <exception cref="BadRequestException"></exception>
+        /// <exception cref="AppException"></exception>
         [Authorize(Role.Client)]
         [HttpPost]
         public int Create(SaleRequest sale)
@@ -55,6 +55,7 @@ namespace HungryHeroesAPI.Controllers
         /// </summary>
         /// <param name="idUserClient"></param>
         /// <returns></returns>
+        /// <exception cref="AppException"></exception>
         [Authorize(Role.Client)]
         [HttpGet("Buys/{idUserClient:int}")]
         public IEnumerable<SaleResponse> GetAllByUserClientId(int idUserClient)
@@ -70,6 +71,7 @@ namespace HungryHeroesAPI.Controllers
         /// </summary>
         /// <param name="idUserBusiness"></param>
         /// <returns></returns>
+        /// <exception cref="AppException"></exception>
         [Authorize(Role.Business)]
         [HttpGet("GetSales/{idUserBusiness:int}")]
         public IEnumerable<SaleResponse> GetSaleByUserBusinessId(int idUserBusiness)
@@ -86,6 +88,7 @@ namespace HungryHeroesAPI.Controllers
         /// </summary>
         /// <param name="code"></param>
         /// <param name="idSale"></param>
+        /// <exception cref="AppException"></exception>
         [Authorize(Role.Business)]
         [HttpPut("Verify-Sale")]
         public string VerifySale(string code,int idSale)
@@ -100,6 +103,7 @@ namespace HungryHeroesAPI.Controllers
         /// when client starts the purchase
         /// </summary>
         /// <param name="idProduct"></param>
+        /// <exception cref="AppException"></exception>
         [Authorize(Role.Client)]
         [HttpPut("Modify-Stock")]
         public string ModifyStock(int idProduct, int quantity)

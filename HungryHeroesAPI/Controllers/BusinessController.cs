@@ -26,6 +26,7 @@ namespace HungryHeroesAPI.Controllers
         /// Method to get all business 
         /// </summary>
         /// <returns></returns>
+        /// <exception cref="AppException"></exception>
         [Authorize(Role.Client)]
         [HttpGet("All")]
         public IEnumerable<UserBusinessResponse> GetBusiness()
@@ -54,7 +55,7 @@ namespace HungryHeroesAPI.Controllers
         /// <param name="id"></param>
         /// <param name="model"></param>
         /// <returns></returns>
-        /// <exception cref="BadRequestException"></exception>
+        /// <exception cref="AppException"></exception>
         [Authorize(Role.Business)]
         [HttpPut("{id:int}")]
         public async Task<UserBusinessResponse> Edit(int id, UserBusinessRequest model)
@@ -71,6 +72,7 @@ namespace HungryHeroesAPI.Controllers
         /// </summary>
         /// <param name="fantasyName"></param>
         /// <returns></returns>
+        /// <exception cref="AppException"></exception>
         [Authorize(Role.Client)]
         [HttpGet("filterByFantasyName/{fantasyName}")]
         public IEnumerable<UserBusinessResponse> FilterFantasyName(string fantasyName)
@@ -85,6 +87,7 @@ namespace HungryHeroesAPI.Controllers
         /// </summary>
         /// <param name="location"></param>
         /// <returns></returns>
+        /// <exception cref="AppException"></exception>
         [Authorize(Role.Client)]
         [HttpGet("filterByLocation/{location}")]
         public IEnumerable<UserBusinessResponse> FilterLocation(string location)

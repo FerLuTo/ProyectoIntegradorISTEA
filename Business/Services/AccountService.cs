@@ -3,6 +3,7 @@ using AutoMapper;
 using Azure.Messaging;
 using Business.Interfaces;
 using Common;
+using Common.ConstValues;
 using Common.Exceptions;
 using Common.Helper;
 using Entities.Enum;
@@ -10,6 +11,7 @@ using Entities.Models;
 using Entities.ViewModels.Request;
 using Entities.ViewModels.Response;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -82,28 +84,28 @@ namespace Business.Services
             {
                 throw new AppException("Este email ya está registrado.");
             }
-            
-                var account = _mapper.Map<Account>(model);
 
-                account.Created = DateTime.UtcNow;
-                account.VerificationToken = GenerateVerificationToken();
-                account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
-                account.IsActive = true;
+            var account = _mapper.Map<Account>(model);
 
-                _context.Accounts.Add(account);
-                _context.SaveChanges();
+            account.Created = DateTime.UtcNow;
+            account.VerificationToken = GenerateVerificationToken();
+            account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+            account.IsActive = true;
 
-                if (account.Role == Role.Client)
-                {
-                    CreateUserClient(account.Id);
-                }
-                else
-                {
-                    CreateUserBusiness(account.Id);
-                }
+            _context.Accounts.Add(account);
+            _context.SaveChanges();
 
-                SendVerificationEmail(account, origin);
-            
+            if (account.Role == Role.Client)
+            {
+                CreateUserClient(account.Id);
+            }
+            else
+            {
+                CreateUserBusiness(account.Id);
+            }
+
+            SendVerificationEmail(account, origin);
+
         }
 
         public void VerifyEmail(string token)
@@ -180,10 +182,10 @@ namespace Business.Services
             if (userBusiness != null)
             {
                 userBusiness.IsActive = false;
-                if(userBusiness.Products != null)
-                foreach (var product in userBusiness.Products.Where(x => x.UserBusinessId == userBusiness.Id))
-                {
-                    product.IsActive = false;
+                if (userBusiness.Products != null)
+                    foreach (var product in userBusiness.Products.Where(x => x.UserBusinessId == userBusiness.Id))
+                    {
+                        product.IsActive = false;
                         _context.Products.Update(product);
                         _context.SaveChanges();
 
@@ -199,6 +201,7 @@ namespace Business.Services
             }
 
             _context.SaveChanges();
+            SendDeletedAccountEmail(account);
         }
 
 
@@ -208,7 +211,7 @@ namespace Business.Services
         private Account GetAccount(int id)
         {
             var account = _context.Accounts.Find(id);
-            if(account is null ||  account.IsActive is false)
+            if (account is null || account.IsActive is false)
                 throw new KeyNotFoundException("Account not found");
 
             return account;
@@ -266,9 +269,28 @@ namespace Business.Services
             string message;
             if (!string.IsNullOrEmpty(origin))
             {
-                var verifyUrl = $"{origin}/account/verify-email?token={account.VerificationToken}";
-                message = $@"<p>Please click the below link to verify your email address:</p>
-                            <p><a href=""{verifyUrl}"">{verifyUrl}</a></p>";
+                //var verifyUrl = $"{origin}/account/verify-email?token={account.VerificationToken}";
+                message = $@"<div style=""box-sizing:border-box; width: 100vw; height: 100vh; padding: 2rem; display: flex; flex-direction: column; font-family: Roboto,Helvetica,Arial,sans-serif;"">
+                             <div style=""width: 30%; align-self: center;"">
+                             <img src=""https://hungryheroesstorage.blob.core.windows.net/images/logo.png"" alt="""" style=""width: 100%;height: 100%;object-fit: contain;"" />
+                             </div>
+                             <div style=""padding: 5rem;display: flex;flex-direction: column;align-items: center;text-align: center;color: #2C3535;"">
+                             <p style=""font-size: 1.2rem;font-weight: 900;letter-spacing: -1px;"">¡Gracias por registrarte!</p>
+                             <p style=""margin-top: 2rem;font-weight: 900;letter-spacing: -1px;"">
+                             Por favor, <a href=""https://hungry-heroes.vercel.app/Accounts/verify-email?token={account.VerificationToken}"" style=""background-color: #B3D6F4;padding: 0.5rem;text-decoration: none;"">
+                             hacé clic aquí </a>para ingresar a tu cuenta.
+                             </p>
+                             </div>
+                             <div style=""width:100%;margin: 5rem 0 1rem 0; border-bottom: solid 1px #2C3535;""></div>
+                             <div style=""font-size: 0.7rem;text-align: left;"">
+                             <p>TÉRMINOS Y CONDICIONES: Lorem ipsum dolor sit, amet consectetur adipisicing elit. 
+                                Facilis ea omnis nam ab voluptas sequi rem laudantium harum sunt repellat, 
+                                nulla vero excepturi necessitatibus quasi sint ducimus quia commodi deleniti.
+                                Lorem ipsum dolor sit, amet consectetur adipisicing elit amet consectetur. </p>
+                             <p style=""font-weight: 900;letter-spacing: -0.5px;"">&copy 2023 Hungry Heroes</p>
+                             </div>
+                             </div>";
+
             }
             else
             {
@@ -277,12 +299,12 @@ namespace Business.Services
             }
 
             _emailService.Send(
-                to: account.Email,
-                subject: "Hungry Heroes - Verify Email",
-                html: $@"<h4>Verify Email</h4>
-                        <p>Thanks for registering!</p>
-                        {message}"
-            );
+                 to: account.Email,
+                 subject: "Hungry Heroes - Verificar Email",
+                 html: message
+             );
+
+
         }
 
         private void SendPasswordResetEmail(Account account, string origin)
@@ -290,9 +312,25 @@ namespace Business.Services
             string message;
             if (!string.IsNullOrEmpty(origin))
             {
-                var resetUrl = $"{origin}/account/reset-password?token={account.ResetToken}";
-                message = $@"<p>Please click the below link to reset your password, the link will be valid for 1 day:</p>
-                            <p><a href=""{resetUrl}"">{resetUrl}</a></p>";
+               // var resetUrl = $"{origin}/account/reset-password?token={account.ResetToken}";
+                message = $@"<div style=""box-sizing: border-box;width: 100vw;height: 100vh;padding: 2rem;display: flex;flex-direction: column;font-family:Roboto,Helvetica,Arial,sans-serif;"">
+                            <div styrle=""width: 30%;align-self: center;"">
+                            <img src=""https://hungryheroesstorage.blob.core.windows.net/images/logo.png"" alt="""" style=""width: 100%;height: 100%;object-fit: contain;"" />
+                            </div>
+                            <div style=""padding: 5rem;display: flex;flex-direction: column;align-items: center;text-align: center;color: #2C3535;"">
+                            <p style=""font-size: 1.2rem;font-weight: 900;letter-spacing: -1px;""> Restablecer contraseña</p>
+                            <p style=""margin-top: 2rem;font-weight: 900;letter-spacing: -1px;"">Por favor, <a href=""https://hungry-heroes.vercel.app/Accounts/reset-password?token={account.ResetToken}"" style=""background-color: #B3D6F4;padding: 0.5rem;text-decoration: none;""> hacé clic aquí </a>para restablecer tu contraseña.</p>
+                            <p style=""margin-top: 2rem;font-weight: 900;letter-spacing: -1px;"">El link es válido por 24hs.</p>
+                            </div>
+                            <div style=""width: 100%;margin: 5rem 0 1rem 0;border-bottom: solid 1px #2C3535;""></div>
+                            <div style=""font-size: 0.7rem;text-align: left;"">
+                            <p>TÉRMINOS Y CONDICIONES: Lorem ipsum dolor sit, amet consectetur adipisicing elit. 
+                                Facilis ea omnis nam ab voluptas sequi rem laudantium harum sunt repellat, 
+                                nulla vero excepturi necessitatibus quasi sint ducimus quia commodi deleniti. 
+                                Lorem ipsum dolor sit, amet consectetur adipisicing elit amet consectetur. </p>
+                            <p style=""font-weight: 900;letter-spacing: -0.5px;"">&copy 2023 Hungry Heroes</p>
+                            </div>
+                            </div>";
             }
             else
             {
@@ -302,12 +340,41 @@ namespace Business.Services
 
             _emailService.Send(
                 to: account.Email,
-                subject: "Hungry Heroes - Reset Password",
-                html: $@"<h4>Reset Password Email</h4>
-                        {message}"
+                subject: "Hungry Heroes - Reestablecer contraseña",
+                html: message
             );
         }
+        
+       private void SendDeletedAccountEmail(Account account)
+            {
+                string message;
 
+                // var resetUrl = $"{origin}/account/reset-password?token={account.ResetToken}";
+                message = $@"<div style=""box-sizing: border-box;width: 100vw;height: 100vh;padding: 2rem;display: flex;flex-direction: column;font-family: Roboto ,Helvetica,Arial,sans-serif;"">
+                             <div style=""width: 30%;align-self: center;"">
+                             <img src=""https://hungryheroesstorage.blob.core.windows.net/images/logo.png"" alt="""" style=""width: 100%;height: 100%;object-fit: contain"" ; />
+                             </div>
+                             <div style=""padding: 5rem;display: flex;flex-direction: column;align-items: center;text-align: center;color: #2C3535;"">
+                             <p style=""margin-top: 2rem;font-weight: 900;letter-spacing: -1px;"">Tu usuario fue dado de baja.</p>
+                             <p style=""margin-top: 2rem;font-weight: 900;letter-spacing: -1px;"">Lamentamos que ya no seas parte de Hungry     Heroes. </p>
+                             </div>
+                             <div style=""width: 100%;margin: 5rem 0 1rem 0;border-bottom: solid 1px #2C3535;""></div>
+                             <div style=""font-size: 0.7rem;text-align: left;"">
+                             <p>TÉRMINOS Y CONDICIONES: Lorem ipsum dolor sit, amet consectetur adipisicing elit. 
+                                  Facilis ea omnis nam ab voluptas sequi rem laudantium harum sunt repellat,
+                                  nulla vero excepturi necessitatibus quasi sint ducimus quia commodi deleniti. 
+                                  Lorem ipsum dolor sit, amet consectetur adipisicing elit amet consectetur. </p>
+                            <p style=""font-weight: 900;letter-spacing: -0.5px;"">&copy 2023 Hungry Heroes</p>
+                            </div>
+                            </div>";
+
+            _emailService.Send(
+                    to: account.Email,
+                    subject: "Hungry Heroes - Cuenta Eliminada",
+                    html: message 
+                    );
+       }
+            
         private void CreateUserClient(int idAccount)
         {
             var client = new UserClient
@@ -329,42 +396,42 @@ namespace Business.Services
             _context.Add(business);
             _context.SaveChanges();
         }
-/*
-        public void ReActivateAccount(int id)
-        {
-  
-
-                var account = _context.Accounts.Find(id);
-                account.IsActive = true;
-
-                var userBusiness = _context.UserBusinesses.FirstOrDefault(x => x.AccountId == id);
-                if (userBusiness != null)
+        /*
+                public void ReActivateAccount(int id)
                 {
-                    userBusiness.IsActive = true;
-                    if (userBusiness.Products != null)
-                        foreach (var product in userBusiness.Products.Where(x => x.UserBusinessId == userBusiness.Id))
+
+
+                        var account = _context.Accounts.Find(id);
+                        account.IsActive = true;
+
+                        var userBusiness = _context.UserBusinesses.FirstOrDefault(x => x.AccountId == id);
+                        if (userBusiness != null)
                         {
-                            product.IsActive = true;
-                            _context.Products.Update(product);
-                            _context.SaveChanges();
+                            userBusiness.IsActive = true;
+                            if (userBusiness.Products != null)
+                                foreach (var product in userBusiness.Products.Where(x => x.UserBusinessId == userBusiness.Id))
+                                {
+                                    product.IsActive = true;
+                                    _context.Products.Update(product);
+                                    _context.SaveChanges();
 
+                                }
+                            _context.UserBusinesses.Update(userBusiness);
                         }
-                    _context.UserBusinesses.Update(userBusiness);
-                }
 
-                var userClient = _context.UserClients.FirstOrDefault(x => x.AccountId == id);
-                if (userClient != null)
-                {
-                    userClient.IsActive = true;
-                    _context.UserClients.Update(userClient);
-                }
+                        var userClient = _context.UserClients.FirstOrDefault(x => x.AccountId == id);
+                        if (userClient != null)
+                        {
+                            userClient.IsActive = true;
+                            _context.UserClients.Update(userClient);
+                        }
 
-                _context.SaveChanges();
-            
-            
+                        _context.SaveChanges();
 
-            
-        }*/
+
+
+
+                }*/
 
         #endregion
     }

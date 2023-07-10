@@ -47,6 +47,7 @@ namespace HungryHeroesAPI.Controllers
         /// </summary>
         /// <param name="product"></param>
         /// <returns></returns>
+        /// <exception cref="AppException"></exception>
         [Authorize(Role.Business)]
         [HttpPost]
         public async Task<ProductResponse> Create([FromForm]ProductRequest product)
@@ -62,6 +63,7 @@ namespace HungryHeroesAPI.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <param name="model"></param>
+        /// <exception cref="AppException"></exception>
         /// <returns></returns>
         [Authorize(Role.Business)]
         [HttpPut("{id:int}")]
@@ -78,6 +80,7 @@ namespace HungryHeroesAPI.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        /// <exception cref="AppException"></exception>
         [Authorize(Role.Business)]
         [HttpDelete("{id:int}")]
         public IActionResult Delete(int id)
