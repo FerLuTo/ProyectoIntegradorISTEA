@@ -57,7 +57,7 @@ namespace HungryHeroesAPI.Controllers
         /// <exception cref="BadRequestException"></exception>
         [Authorize(Role.Business)]
         [HttpPut("{id:int}")]
-        public async Task<UserBusinessResponse> Edit(int id, UserBusinessRequest model)
+        public async Task<UserBusinessResponse> Edit(int id, [FromForm]UserBusinessRequest model)
         {
             if (Account.Role != Role.Business)
                 throw new AppException("Unauthorized");

@@ -3,6 +3,7 @@ using AutoMapper;
 using Business.Interfaces;
 using Common.Exceptions;
 using Common.Helper;
+using Entities.Enum;
 using Entities.Models;
 using Entities.ViewModels.Request;
 using Entities.ViewModels.Response;
@@ -12,11 +13,13 @@ namespace Business.Services
 {
     public class BusinessService : IBusinessService
     {
+        private readonly IAzureBlobStorageService _azureBlobStorageService;
         private readonly AppDBContext _context;
         private readonly IMapper _mapper;
 
-        public BusinessService(AppDBContext context, IMapper mapper)
+        public BusinessService(IAzureBlobStorageService azureBlobStorageService, AppDBContext context, IMapper mapper)
         {
+            _azureBlobStorageService = azureBlobStorageService;
             _context = context;
             _mapper = mapper;
         }
@@ -48,10 +51,17 @@ namespace Business.Services
 
             userBusiness.ActiveProfile = true; 
             _mapper.Map(model, userBusiness);
+
+            if (model.Image != null)
+            {
+                userBusiness.ImagePath = await _azureBlobStorageService.UploadAsync(model.Image, ContainerEnum.IMAGES);
+            }
+
             _context.UserBusinesses.Update(userBusiness);
             await _context.SaveChangesAsync();
-
-            return _mapper.Map<UserBusinessResponse>(userBusiness);
+            var response = _mapper.Map<UserBusinessResponse>(userBusiness);
+            response.imageUrl = "https://hungryheroesstorage.blob.core.windows.net/images/" + userBusiness.ImagePath;
+            return response;
         }
 
         public IEnumerable<UserBusinessResponse> FilterFantasyName(string fantasyName)

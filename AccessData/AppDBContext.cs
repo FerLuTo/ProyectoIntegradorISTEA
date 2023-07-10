@@ -53,7 +53,7 @@ namespace AccessData
 
             modelBuilder.Entity<UserBusiness>(entity =>
             {
-                entity.HasKey(x =>x.Id);    
+                entity.HasKey(x => x.Id);
 
                 entity.Property(e => e.FantasyName)
                       .HasColumnType("varchar")
@@ -93,6 +93,11 @@ namespace AccessData
                     .HasColumnType("varchar")
                     .HasMaxLength(100)
                     .IsRequired();
+                
+                entity.Property(e => e.ImagePath)
+                .HasColumnType("nvarchar")
+                .HasMaxLength(100)
+                .IsRequired(false);
 
                 entity.HasOne(e => e.Account)
                       .WithMany(e => e.UsersBusiness)
@@ -105,7 +110,7 @@ namespace AccessData
                 entity.HasOne(e => e.Account)
                       .WithMany(e => e.UsersClients)
                       .HasForeignKey(e => e.AccountId);
-               
+
             });
 
             modelBuilder.Entity<Product>(entity =>
@@ -140,7 +145,7 @@ namespace AccessData
                     .HasForeignKey(e => e.UserBusinessId);
 
             });
-        
+
             modelBuilder.Entity<Sale>(entity =>
             {
                 entity.HasKey(x => x.Id);
