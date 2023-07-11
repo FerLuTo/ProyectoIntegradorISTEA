@@ -11,10 +11,10 @@ namespace Business.Interfaces
     public interface IAccountService
     {
         AuthenticateResponse Authenticate(AuthenticateRequest model);
-        void Register(RegisterRequest model, string origin);
+        void Register(RegisterRequest model);
         void VerifyEmail(string token);
-        void ForgotPassword(ForgotPasswordRequest model, string origin);
-        void ValidateResetToken(ValidateResetTokenRequest model);
+        void ForgotPassword(ForgotPasswordRequest model);
+        void ValidateResetToken(string token);
         void ResetPassword(ResetPasswordRequest model);
         void ChangePassword(ChangePasswordRequest model);
         AccountResponse GetById(int id);

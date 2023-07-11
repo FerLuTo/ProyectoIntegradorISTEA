@@ -41,7 +41,7 @@ namespace HungryHeroesAPI.Controllers
         [HttpPost("register")]
         public IActionResult Register(RegisterRequest model)
         {
-            _accountService.Register(model, Request.Headers["origin"]);
+            _accountService.Register(model);
             return Ok();
         }
 
@@ -53,11 +53,22 @@ namespace HungryHeroesAPI.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("verify-email")]
-        public IActionResult VerifyEmail(VerifyEmailRequest model)
+        public IActionResult VerifyEmail([FromHeader]string token)
         {
-            _accountService.VerifyEmail(model.Token);
-            return Ok();
+            _accountService.VerifyEmail(token);
+            return RedirectToRoute("https://hungry-heroes.vercel.app/Accounts/verify-email");
         }
+
+        [AllowAnonymous]
+        [HttpPost("validate-token")]
+        public IActionResult ValidateResetToken([FromHeader] string token)
+        {
+            _accountService.ValidateResetToken(token);
+
+            //return RedirectToRoute("https://hungry-heroes.vercel.app/Accounts/reset-password");
+            return RedirectToAction("ResetPassoword");
+        }
+        
 
         /// <summary>
         /// Method that when entering the email of the account 
@@ -69,7 +80,7 @@ namespace HungryHeroesAPI.Controllers
         [HttpPost("forgot-password")]
         public IActionResult ForgotPassword(ForgotPasswordRequest model)
         {
-            _accountService.ForgotPassword(model, Request.Headers["origin"]);
+            _accountService.ForgotPassword(model);
             return Ok(new { message = "Ingresá a tu email para seguir las instrucciones." });
         }
 
@@ -88,7 +99,7 @@ namespace HungryHeroesAPI.Controllers
         }
 
         /// <summary>
-        /// Method
+        /// Method to change password
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>

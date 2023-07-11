@@ -19,7 +19,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-
+using System.Web;
 
 namespace Business.Services
 {
@@ -74,7 +74,7 @@ namespace Business.Services
             return response;
         }
 
-        public void Register(RegisterRequest model, string origin)
+        public void Register(RegisterRequest model)
         {
             /*if (_context.Accounts.Any(x => x.Email == model.Email && x.IsActive == false))
             {
@@ -104,7 +104,7 @@ namespace Business.Services
                 CreateUserBusiness(account.Id);
             }
 
-            SendVerificationEmail(account, origin);
+            SendVerificationEmail(account);
 
         }
 
@@ -117,7 +117,7 @@ namespace Business.Services
             _context.SaveChanges();
         }
 
-        public void ForgotPassword(ForgotPasswordRequest model, string origin)
+        public void ForgotPassword(ForgotPasswordRequest model)
         {
             var account = _context.Accounts.SingleOrDefault(x => x.Email == model.Email);
 
@@ -131,25 +131,35 @@ namespace Business.Services
             _context.Accounts.Update(account);
             _context.SaveChanges();
 
-            SendPasswordResetEmail(account, origin);
+           // SendPasswordResetEmail(account);
         }
 
-        public void ValidateResetToken(ValidateResetTokenRequest model)
+        public void ValidateResetToken(string token)
         {
-            GetAccountByResetToken(model.Token);
+            var account = _context.Accounts.SingleOrDefault(x =>
+                         x.ResetToken == token && x.ResetTokenExpires > DateTime.UtcNow) ?? throw new AppException("Verification failed");
+            
+            
+            account.ResetTokenExpires = null;
+            account.PasswordReset = DateTime.UtcNow;
+            _context.Accounts.Update(account);
+            _context.SaveChanges();
+
         }
 
         public void ResetPassword(ResetPasswordRequest model)
         {
-            var account = GetAccountByResetToken(model.Token);
 
-            //Update password and remove old token
-            account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
-            account.PasswordReset = DateTime.UtcNow;
-            account.ResetTokenExpires = null;
+            var account = _context.Accounts.FirstOrDefault(a => a.ResetToken == model.Token);
+            if (account != null)
+            {
+                
+                account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
-            _context.Accounts.Update(account);
-            _context.SaveChanges();
+
+                _context.Accounts.Update(account);
+                _context.SaveChanges();
+            }
         }
 
         public void ChangePassword(ChangePasswordRequest model)
@@ -264,20 +274,18 @@ namespace Business.Services
             return token;
         }
 
-        private void SendVerificationEmail(Account account, string origin)
+        private void SendVerificationEmail(Account account)
         {
-            string message;
-            if (!string.IsNullOrEmpty(origin))
-            {
-                //var verifyUrl = $"{origin}/account/verify-email?token={account.VerificationToken}";
-                message = $@"<div style=""box-sizing:border-box; width: 100vw; height: 100vh; padding: 2rem; display: flex; flex-direction: column; font-family: Roboto,Helvetica,Arial,sans-serif;"">
+
+            //var verifyUrl = $"{origin}/account/verify-email?token={account.VerificationToken}";
+            string message = $@"<div style=""box-sizing:border-box; width: 100vw; height: 100vh; padding: 2rem; display: flex; flex-direction: column; font-family: Roboto,Helvetica,Arial,sans-serif;"">
                              <div style=""width: 30%; align-self: center;"">
                              <img src=""https://hungryheroesstorage.blob.core.windows.net/images/logo.png"" alt="""" style=""width: 100%;height: 100%;object-fit: contain;"" />
                              </div>
                              <div style=""padding: 5rem;display: flex;flex-direction: column;align-items: center;text-align: center;color: #2C3535;"">
                              <p style=""font-size: 1.2rem;font-weight: 900;letter-spacing: -1px;"">¡Gracias por registrarte!</p>
                              <p style=""margin-top: 2rem;font-weight: 900;letter-spacing: -1px;"">
-                             Por favor, <a href=""https://hungry-heroes.vercel.app/Accounts/verify-email?token={account.VerificationToken}"" style=""background-color: #B3D6F4;padding: 0.5rem;text-decoration: none;"">
+                             Por favor, <a href=""https://hungry-heroes.azurewebsites.net/Accounts/verify-email?token={account.VerificationToken}"" style=""background-color: #B3D6F4;padding: 0.5rem;text-decoration: none;"">
                              hacé clic aquí </a>para ingresar a tu cuenta.
                              </p>
                              </div>
@@ -291,12 +299,7 @@ namespace Business.Services
                              </div>
                              </div>";
 
-            }
-            else
-            {
-                message = $@"<p>Please use the below token to verify your email address </p>
-                            <p><code>{account.VerificationToken}</code></p>";
-            }
+          
 
             _emailService.Send(
                  to: account.Email,
