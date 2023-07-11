@@ -1,25 +1,18 @@
 ﻿using AccessData;
 using AutoMapper;
-using Azure.Messaging;
 using Business.Interfaces;
 using Common;
-using Common.ConstValues;
-using Common.Exceptions;
 using Common.Helper;
 using Entities.Enum;
 using Entities.Models;
 using Entities.ViewModels.Request;
 using Entities.ViewModels.Response;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Web;
 
 namespace Business.Services
 {
