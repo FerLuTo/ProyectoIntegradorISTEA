@@ -52,7 +52,7 @@ namespace HungryHeroesAPI.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpPost("verify-email/{token}")]
+        [HttpPost("verify-email")]
         public IActionResult VerifyEmail(string token)
         {
             _accountService.VerifyEmail(token);

@@ -269,7 +269,7 @@ namespace Business.Services
 
         public void SendVerificationEmail(Account account)
         {
-            string confirmationUrl = $"https://hungry-heroes.vercel.app/Accounts/verify-email/{account.VerificationToken}";
+            string confirmationUrl = $"https://hungry-heroes.vercel.app/Accounts/verify-email?token={account.VerificationToken}";
             //var verifyUrl = $"{origin}/account/verify-email?token={account.VerificationToken}";
             string message = $@"<div style=""box-sizing:border-box; width: 100vw; height: 100vh; padding: 2rem; display: flex; flex-direction: column; font-family: Roboto,Helvetica,Arial,sans-serif;"">
                              <div style=""width: 30%; align-self: center;"">
