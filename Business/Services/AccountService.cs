@@ -267,9 +267,9 @@ namespace Business.Services
             return token;
         }
 
-        private void SendVerificationEmail(Account account)
+        public void SendVerificationEmail(Account account)
         {
-            
+            string confirmationUrl = $"https://hungry-heroes.vercel.app/Accounts/verify-email?token={account.VerificationToken}";
             //var verifyUrl = $"{origin}/account/verify-email?token={account.VerificationToken}";
             string message = $@"<div style=""box-sizing:border-box; width: 100vw; height: 100vh; padding: 2rem; display: flex; flex-direction: column; font-family: Roboto,Helvetica,Arial,sans-serif;"">
                              <div style=""width: 30%; align-self: center;"">
@@ -278,7 +278,7 @@ namespace Business.Services
                              <div style=""padding: 5rem;display: flex;flex-direction: column;align-items: center;text-align: center;color: #2C3535;"">
                              <p style=""font-size: 1.2rem;font-weight: 900;letter-spacing: -1px;"">¡Gracias por registrarte!</p>
                              <p style=""margin-top: 2rem;font-weight: 900;letter-spacing: -1px;"">
-                             Por favor, <a href=""https://hungry-heroes.azurewebsites.net/Accounts/verify-email?token={account.VerificationToken}"" style=""background-color: #B3D6F4;padding: 0.5rem;text-decoration: none;"">
+                             Por favor, <a href=""{confirmationUrl}"" style=""background-color: #B3D6F4;padding: 0.5rem;text-decoration: none;"">
                              hacé clic aquí </a>para ingresar a tu cuenta.
                              </p>
                              </div>

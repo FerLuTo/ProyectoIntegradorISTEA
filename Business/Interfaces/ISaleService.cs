@@ -10,7 +10,7 @@ namespace Business.Interfaces
         int Create(SaleRequest model);
         SaleResponse SaleDetail(int idSale);
         string VerifySale(string code, int idSale);
-        string ModifyStock(int idProduct, int quantity);
+        void ModifyStock(int idProduct, int quantity);
 
     }
 }

@@ -106,11 +106,11 @@ namespace HungryHeroesAPI.Controllers
         /// <exception cref="AppException"></exception>
         [Authorize(Role.Client)]
         [HttpPut("Modify-Stock")]
-        public string ModifyStock(int idProduct, int quantity)
+        public void ModifyStock(int idProduct, int quantity)
         {
             if (Account.Role != Role.Client)
                 throw new AppException("Unauthorized");
-            return _saleService.ModifyStock(idProduct, quantity);
+            _saleService.ModifyStock(idProduct, quantity);
         }
 
     }

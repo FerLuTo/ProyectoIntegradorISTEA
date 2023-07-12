@@ -36,6 +36,9 @@ namespace Business.Services
                 sale.Total = model.Quantity * product.Price;
                 sale.DateSale = DateTime.Now;
 
+            //TODO: PROBAR
+            ModifyStock(sale.ProductId,sale.Quantity);
+
                 _context.Sales.Add(sale);
                 _context.SaveChanges();
                 
@@ -127,9 +130,9 @@ namespace Business.Services
             return message;
         }
 
-        public string ModifyStock(int idProduct, int quantity)
+        public void ModifyStock(int idProduct, int quantity)
         {
-            var message = "Ok";
+            //var message = "Ok";
             var product = _context.Products.First(x => x.Id == idProduct);
 
             product.Stock -= quantity;
@@ -137,7 +140,7 @@ namespace Business.Services
             _context.Products.Update(product);
             _context.SaveChanges();
 
-            return message;
+            //return message;
         }
 
         #endregion
