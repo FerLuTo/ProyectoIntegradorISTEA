@@ -52,11 +52,11 @@ namespace HungryHeroesAPI.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpPost("verify-email/{token:string}")]
+        [HttpPost("verify-email/{token}")]
         public IActionResult VerifyEmail(string token)
         {
             _accountService.VerifyEmail(token);
-            return RedirectToRoute("https://hungry-heroes.vercel.app/Accounts/verify-email");
+            return Redirect("https://hungry-heroes.vercel.app/Accounts/verify-email");
         }
 
         [AllowAnonymous]

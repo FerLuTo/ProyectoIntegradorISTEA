@@ -269,7 +269,7 @@ namespace Business.Services
 
         private void SendVerificationEmail(Account account)
         {
-
+            
             //var verifyUrl = $"{origin}/account/verify-email?token={account.VerificationToken}";
             string message = $@"<div style=""box-sizing:border-box; width: 100vw; height: 100vh; padding: 2rem; display: flex; flex-direction: column; font-family: Roboto,Helvetica,Arial,sans-serif;"">
                              <div style=""width: 30%; align-self: center;"">
