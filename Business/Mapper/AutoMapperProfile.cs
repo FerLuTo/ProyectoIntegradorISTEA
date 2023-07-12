@@ -40,7 +40,8 @@ namespace Business.Mapper
                 .ForMember(x => x.Location, map => map.MapFrom(src => src.Location))
                 .ForMember(x => x.Alias, map => map.MapFrom(src => src.Alias))
                 .ForMember(x => x.Web, map => map.MapFrom(src => src.Web))
-                .ForMember(x => x.ActiveProfile, map => map.MapFrom(src => src.ActiveProfile));
+                .ForMember(x => x.ActiveProfile, map => map.MapFrom(src => src.ActiveProfile))
+                .ForMember(x => x.imageUrl, map => map.MapFrom(src => src.ImagePath));
 
             CreateMap<UserBusinessRequest, UserBusiness>();
 
