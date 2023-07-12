@@ -41,6 +41,14 @@ namespace Business.Services
                .Select(x => _mapper.Map<UserBusinessResponse>(x))
                .FirstOrDefault();
 
+            var userBusinessImage = _context.UserBusinesses
+               .Where(x => x.Id == id && x.IsActive != false)
+               .Select(x => _mapper.Map<UserBusiness>(x))
+               .FirstOrDefault();
+
+            userBusiness.ImageUrl = "https://hungryheroesstorage.blob.core.windows.net/images/" + userBusinessImage.ImagePath;
+
+
             return userBusiness is null ? throw new KeyNotFoundException("User doesnt exists") : userBusiness;
         }
 
@@ -60,7 +68,7 @@ namespace Business.Services
             _context.UserBusinesses.Update(userBusiness);
             await _context.SaveChangesAsync();
             var response = _mapper.Map<UserBusinessResponse>(userBusiness);
-            response.imageUrl = "https://hungryheroesstorage.blob.core.windows.net/images/" + userBusiness.ImagePath;
+            response.ImageUrl = "https://hungryheroesstorage.blob.core.windows.net/images/" + userBusiness.ImagePath;
             return response;
         }
 
