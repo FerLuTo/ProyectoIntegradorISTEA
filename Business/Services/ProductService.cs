@@ -25,12 +25,12 @@ namespace Business.Services
             _mapper = mapper;
         }
 
-        public IEnumerable<ProductResponse> GetProductsByUserBusiness(int idUserBusiness)
+        public async Task<IEnumerable<ProductResponse>> GetProductsByUserBusiness(int idUserBusiness)
         {
 
-            var products = _context.Products
+            var products = await _context.Products
             .Where(x => x.UserBusiness.Id == idUserBusiness && x.IsActive !=false && x.Stock > 0)
-            .ToList();
+            .ToListAsync();
 
             return _mapper.Map<IList<ProductResponse>>(products);
 

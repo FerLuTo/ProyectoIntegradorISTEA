@@ -23,29 +23,29 @@ namespace Business.Services
             _context = context;
             _mapper = mapper;
         }
-        public int Create(SaleRequest model)
+
+        public async Task<int> Create(SaleRequest model)
         {
-            var product = _context.Products.Find(model.ProductId);
-            var userBusiness = _context.UserBusinesses.Find(model.BusinessId);
-            var userClient = _context.UserClients.Find(model.UserClientId);
+            var product = await _context.Products.FindAsync(model.ProductId);
+            var userBusiness = await _context.UserBusinesses.FindAsync(model.BusinessId);
+            var userClient = await _context.UserClients.FindAsync(model.UserClientId);
 
-                var sale = _mapper.Map<Sale>(model);
-                sale.ProductId = product.Id;
-                sale.BusinessId = userBusiness.Id;
-                sale.UserClientId = userClient.Id;
-                sale.Total = model.Quantity * product.Price;
-                sale.DateSale = DateTime.Now;
+            var sale = _mapper.Map<Sale>(model);
+            sale.ProductId = product.Id;
+            sale.BusinessId = userBusiness.Id;
+            sale.UserClientId = userClient.Id;
+            sale.Total = model.Quantity * product.Price;
+            sale.DateSale = DateTime.Now;
 
-            //TODO: PROBAR
-            ModifyStock(sale.ProductId,sale.Quantity);
+            // TODO: PROBAR
+            await ModifyStock(sale.ProductId, sale.Quantity);
 
-                _context.Sales.Add(sale);
-                _context.SaveChanges();
-                
-                var idSale = sale.Id;
+            _context.Sales.Add(sale);
+            await _context.SaveChangesAsync();
+
+            var idSale = sale.Id;
 
             return idSale;
-          
         }
 
         public SaleResponse SaleDetail(int idSale)
@@ -130,17 +130,14 @@ namespace Business.Services
             return message;
         }
 
-        public void ModifyStock(int idProduct, int quantity)
+        public async Task ModifyStock(int idProduct, int quantity)
         {
-            //var message = "Ok";
-            var product = _context.Products.First(x => x.Id == idProduct);
+            var product = await _context.Products.FindAsync(idProduct);
 
             product.Stock -= quantity;
-            
-            _context.Products.Update(product);
-            _context.SaveChanges();
 
-            //return message;
+            _context.Products.Update(product);
+            await _context.SaveChangesAsync();
         }
 
         #endregion

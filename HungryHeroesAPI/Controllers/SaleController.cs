@@ -30,11 +30,11 @@ namespace HungryHeroesAPI.Controllers
         /// <exception cref="AppException"></exception>
         [Authorize(Role.Client)]
         [HttpPost]
-        public int Create(SaleRequest sale)
+        public async Task<int> Create(SaleRequest sale)
         {
             if (Account.Role != Role.Client)
                 throw new AppException("Unauthorized");
-            return _saleService.Create(sale);
+            return await _saleService.Create(sale);
         }
 
         /// <summary>
@@ -106,11 +106,11 @@ namespace HungryHeroesAPI.Controllers
         /// <exception cref="AppException"></exception>
         [Authorize(Role.Client)]
         [HttpPut("Modify-Stock")]
-        public void ModifyStock(int idProduct, int quantity)
+        public async Task ModifyStock(int idProduct, int quantity)
         {
             if (Account.Role != Role.Client)
                 throw new AppException("Unauthorized");
-            _saleService.ModifyStock(idProduct, quantity);
+            await _saleService.ModifyStock(idProduct, quantity);
         }
 
     }

@@ -28,8 +28,8 @@ namespace HungryHeroesAPI.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("AllByBusiness/{idUserBusiness}")]
-        public IEnumerable<ProductResponse> GetProductsByUserBusiness(int idUserBusiness)
-          => _productService.GetProductsByUserBusiness(idUserBusiness);
+        public async Task<IEnumerable<ProductResponse>> GetProductsByUserBusiness(int idUserBusiness)
+          => await _productService.GetProductsByUserBusiness(idUserBusiness);
 
         /// <summary>
         /// Method to get product by id

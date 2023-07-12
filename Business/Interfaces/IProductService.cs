@@ -5,7 +5,7 @@ namespace Business.Interfaces
 {
     public interface IProductService
     {
-        public IEnumerable<ProductResponse> GetProductsByUserBusiness(int idUserBusiness);
+         Task<IEnumerable<ProductResponse>> GetProductsByUserBusiness(int idUserBusiness);
         public ProductResponse GetProduct(int id);
         public Task<ProductResponse> Create(ProductRequest product);
         public Task<ProductResponse> Edit(int id, ProductRequest product);

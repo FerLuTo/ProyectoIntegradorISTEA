@@ -7,10 +7,10 @@ namespace Business.Interfaces
     {
         IEnumerable<SaleResponse> GetSaleByUserClientId(int idUserClient);
         IEnumerable<SaleResponse> GetSaleByUserBusinessId(int idUserBusiness);
-        int Create(SaleRequest model);
+        Task<int> Create(SaleRequest model);
         SaleResponse SaleDetail(int idSale);
         string VerifySale(string code, int idSale);
-        void ModifyStock(int idProduct, int quantity);
+        Task ModifyStock(int idProduct, int quantity);
 
     }
 }
