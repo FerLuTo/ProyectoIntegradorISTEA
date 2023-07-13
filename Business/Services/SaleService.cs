@@ -72,7 +72,7 @@ namespace Business.Services
         public IEnumerable<SaleResponse> GetSaleByUserClientId(int idUserClient)
         {
             
-            var sale = _context.Sales.Where(x => x.UserClientId == idUserClient).ToList();
+            var sale = _context.Sales.Where(x => x.UserClientId == idUserClient).OrderBy(x => x.DateSale).ToList();
 
             return _mapper.Map<IList<SaleResponse>>(sale);
            
@@ -80,7 +80,7 @@ namespace Business.Services
 
         public IEnumerable<SaleResponse> GetSaleByUserBusinessId(int idUserBusiness)
         {
-            var sale = _context.Sales.Where(x => x.BusinessId == idUserBusiness).ToList();
+            var sale = _context.Sales.Where(x => x.BusinessId == idUserBusiness).OrderBy(x => x.DateSale).ToList();
             return _mapper.Map<IList<SaleResponse>>(sale);
         }
 

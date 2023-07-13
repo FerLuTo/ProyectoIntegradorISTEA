@@ -61,12 +61,12 @@ namespace HungryHeroesAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("validate-token")]
-        public IActionResult ValidateResetToken([FromHeader] string token)
+        public IActionResult ValidateResetToken(string token)
         {
             _accountService.ValidateResetToken(token);
 
             //return RedirectToRoute("https://hungry-heroes.vercel.app/Accounts/reset-password");
-            return RedirectToAction("ResetPassoword");
+            return Ok();
         }
         
 
