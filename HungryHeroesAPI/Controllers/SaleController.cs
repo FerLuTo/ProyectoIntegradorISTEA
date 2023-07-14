@@ -91,11 +91,11 @@ namespace HungryHeroesAPI.Controllers
         /// <exception cref="AppException"></exception>
         [Authorize(Role.Business)]
         [HttpPut("Verify-Sale")]
-        public string VerifySale(string code,int idSale)
+        public string VerifySale(string code)
         {
             if (Account.Role != Role.Business)
                 throw new AppException("Unauthorized");
-           return  _saleService.VerifySale(code, idSale);
+           return  _saleService.VerifySale(code);
         }
 
         /// <summary>

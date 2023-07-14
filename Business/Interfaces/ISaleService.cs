@@ -9,7 +9,7 @@ namespace Business.Interfaces
         IEnumerable<SaleResponse> GetSaleByUserBusinessId(int idUserBusiness);
         Task<int> Create(SaleRequest model);
         SaleResponse SaleDetail(int idSale);
-        string VerifySale(string code, int idSale);
+        string VerifySale(string code);
         Task ModifyStock(int idProduct, int quantity);
 
     }

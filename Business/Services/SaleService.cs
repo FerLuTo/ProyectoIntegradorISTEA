@@ -118,10 +118,10 @@ namespace Business.Services
 
 
 
-        public string VerifySale(string code, int idSale)
+        public string VerifySale(string code)
         {
             var message = "Ok";
-            var sale = _context.Sales.First(x => x.Code == code && x.Id == idSale) ?? throw new AppException("El código ingresado es incorrecto");
+            var sale = _context.Sales.SingleOrDefault(x => x.Code == code) ?? throw new AppException("El código ingresado es incorrecto");
             sale.Delivered = true;
 
             _context.Sales.Update(sale);
