@@ -270,7 +270,6 @@ namespace Business.Services
         public void SendVerificationEmail(Account account)
         {
             string confirmationUrl = $"https://hungry-heroes.vercel.app/Accounts/verify-email?token={account.VerificationToken}";
-            //var verifyUrl = $"{origin}/account/verify-email?token={account.VerificationToken}";
             string message = $@"<div style=""box-sizing:border-box; width: 100vw; height: 100vh; padding: 2rem; display: flex; flex-direction: column; font-family: Roboto,Helvetica,Arial,sans-serif;"">
                              <div style=""width: 30%; align-self: center;"">
                              <img src=""https://hungryheroesstorage.blob.core.windows.net/images/logo.png"" alt="""" style=""width: 100%;height: 100%;object-fit: contain;"" />
@@ -307,9 +306,9 @@ namespace Business.Services
         {
             string message;
           
-                string confirmationUrl = $"https://hungry-heroes.vercel.app/Accounts/reset-password?token={account.ResetToken}";
+                string confirmationUrl = $"https://hungry-heroes.vercel.app/Accounts/verify?token={account.ResetToken}";
                 message = $@"<div style=""box-sizing: border-box;width: 100vw;height: 100vh;padding: 2rem;display: flex;flex-direction: column;font-family:Roboto,Helvetica,Arial,sans-serif;"">
-                            <div styrle=""width: 30%;align-self: center;"">
+                            <div style=""width: 30%;align-self: center;"">
                             <img src=""https://hungryheroesstorage.blob.core.windows.net/images/logo.png"" alt="""" style=""width: 100%;height: 100%;object-fit: contain;"" />
                             </div>
                             <div style=""padding: 5rem;display: flex;flex-direction: column;align-items: center;text-align: center;color: #2C3535;"">

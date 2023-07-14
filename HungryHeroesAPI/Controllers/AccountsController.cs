@@ -65,7 +65,6 @@ namespace HungryHeroesAPI.Controllers
         {
             _accountService.ValidateResetToken(token);
 
-            //return RedirectToRoute("https://hungry-heroes.vercel.app/Accounts/reset-password");
             return Ok();
         }
         
